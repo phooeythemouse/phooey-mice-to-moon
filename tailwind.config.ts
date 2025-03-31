@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				space: {
+					dark: '#0A0E17',
+					blue: '#33C3F0',
+					accent: '#D6BCFA',
+					purple: '#1A1F2C',
+					light: '#E2E8F0'
 				}
 			},
 			borderRadius: {
@@ -84,11 +92,38 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'twinkle': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
+				},
+				'rotate': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				},
+				'shooting-star': {
+					'0%': { transform: 'translateX(0) translateY(0)', opacity: '1' },
+					'70%': { opacity: '1' },
+					'100%': { transform: 'translateX(100px) translateY(100px)', opacity: '0' }
+				},
+				'pulse': {
+					'0%, 100%': { opacity: '1', transform: 'scale(1)' },
+					'50%': { opacity: '0.8', transform: 'scale(1.05)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 5s ease-in-out infinite',
+				'twinkle': 'twinkle 3s ease-in-out infinite',
+				'rotate': 'rotate 20s linear infinite',
+				'rotate-slow': 'rotate 30s linear infinite',
+				'shooting-star': 'shooting-star 2s ease-in-out infinite',
+				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
 			}
 		}
 	},
