@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Rocket, Moon } from 'lucide-react';
+import { Menu, X, Moon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center space-x-2">
-              <Rocket className="h-9 w-9 text-space-blue" />
+              <img 
+                src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                alt="PHOOEY" 
+                className="h-12 w-12 animate-float" 
+              />
               <span className="text-2xl font-bold text-gradient">PHOOEY</span>
             </Link>
           </div>

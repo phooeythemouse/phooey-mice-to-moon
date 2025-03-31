@@ -1,5 +1,5 @@
 import React from 'react';
-import { Twitter, MessageCircle, Github, Rocket } from 'lucide-react';
+import { Twitter, MessageCircle, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -9,7 +9,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Rocket className="h-7 w-7 text-space-blue" />
+              <img 
+                src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                alt="PHOOEY" 
+                className="h-10 w-10" 
+              />
               <span className="text-2xl font-bold text-gradient">PHOOEY</span>
             </div>
             <p className="text-sm text-gray-300 max-w-xs">

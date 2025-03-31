@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Rocket, ExternalLink, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import Navbar from '@/components/Navbar';
@@ -51,7 +51,11 @@ const HomePage = () => {
               <div className="relative w-80 h-80 md:w-96 md:h-96">
                 <div className="absolute top-0 left-0 w-full h-full rounded-full bg-space-blue/20 animate-pulse"></div>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-space-blue to-space-accent opacity-80 animate-rotate-slow"></div>
-                <Rocket className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white w-20 h-20 md:w-24 md:h-24 animate-float" />
+                <img 
+                  src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                  alt="PHOOEY" 
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 md:w-48 md:h-48 animate-float" 
+                />
               </div>
             </div>
           </div>
