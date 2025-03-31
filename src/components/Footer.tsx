@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Twitter, Discord, Github, Rocket } from 'lucide-react';
+import { Twitter, MessageCircle, Github, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -21,7 +20,7 @@ const Footer = () => {
                 <Twitter size={20} />
               </a>
               <a href="#" className="text-gray-400 hover:text-space-blue transition-colors">
-                <Discord size={20} />
+                <MessageCircle size={20} />
               </a>
               <a href="#" className="text-gray-400 hover:text-space-blue transition-colors">
                 <Github size={20} />

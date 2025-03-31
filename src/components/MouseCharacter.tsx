@@ -8,6 +8,7 @@ interface MouseCharacterProps {
   className?: string;
   description?: string;
   animationClass?: string;
+  style?: React.CSSProperties;
 }
 
 const MouseCharacter: React.FC<MouseCharacterProps> = ({ 
@@ -15,10 +16,11 @@ const MouseCharacter: React.FC<MouseCharacterProps> = ({
   id, 
   className,
   description,
-  animationClass = "animate-float" 
+  animationClass = "animate-float",
+  style
 }) => {
   return (
-    <div className={cn('relative flex flex-col items-center', className)}>
+    <div className={cn('relative flex flex-col items-center', className)} style={style}>
       <div className={cn('mouse-shadow rounded-full bg-space-purple p-4 mb-3', animationClass)}>
         <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full bg-gradient-to-br from-space-blue to-space-accent">
           <span className="text-2xl md:text-3xl font-bold text-white">{name.charAt(0)}</span>
