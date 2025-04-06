@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Twitter, MessageCircle, Github } from 'lucide-react';
+import { Twitter, MessageCircle, Github, Globe, ExternalLink, Shield, Zap, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -38,6 +39,7 @@ const Footer = () => {
               <li><Link to="/" className="text-gray-400 hover:text-space-blue transition-colors">Home</Link></li>
               <li><Link to="/about" className="text-gray-400 hover:text-space-blue transition-colors">About</Link></li>
               <li><Link to="/token" className="text-gray-400 hover:text-space-blue transition-colors">Token</Link></li>
+              <li><Link to="/nft" className="text-gray-400 hover:text-space-blue transition-colors">NFT Collection</Link></li>
               <li><Link to="/community" className="text-gray-400 hover:text-space-blue transition-colors">Community</Link></li>
               <li><Link to="/fun" className="text-gray-400 hover:text-space-blue transition-colors">Fun Zone</Link></li>
             </ul>
@@ -46,11 +48,43 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">Resources</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-space-blue transition-colors">White Paper</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-space-blue transition-colors">Contract Address</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-space-blue transition-colors">Solana Explorer</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-space-blue transition-colors">DEX Listings</a></li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-space-blue transition-colors inline-flex items-center">
+                  <span>White Paper</span>
+                  <ExternalLink className="ml-1.5 h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-space-blue transition-colors inline-flex items-center">
+                  <span>Contract Address</span>
+                  <ExternalLink className="ml-1.5 h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-space-blue transition-colors inline-flex items-center">
+                  <span>Solana Explorer</span>
+                  <ExternalLink className="ml-1.5 h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-space-blue transition-colors inline-flex items-center">
+                  <span>DEX Listings</span>
+                  <ExternalLink className="ml-1.5 h-3 w-3" />
+                </a>
+              </li>
             </ul>
+            
+            {/* Trust signals */}
+            <div className="mt-6 space-y-2">
+              <div className="flex items-center text-gray-300 text-sm">
+                <Shield className="mr-2 h-4 w-4 text-green-400" />
+                <span>Smart Contract Audited</span>
+              </div>
+              <div className="flex items-center text-gray-300 text-sm">
+                <Globe className="mr-2 h-4 w-4 text-green-400" />
+                <span>KYC Team Verified</span>
+              </div>
+            </div>
           </div>
           
           <div>
@@ -66,15 +100,39 @@ const Footer = () => {
                 Join
               </button>
             </div>
+            
+            {/* Partnerships */}
+            <div className="mt-6">
+              <h4 className="text-sm font-bold text-white mb-2">Partnerships</h4>
+              <div className="flex flex-wrap gap-2">
+                <div className="glass-card p-1 rounded-md">
+                  <Zap className="h-5 w-5 text-yellow-400" />
+                </div>
+                <div className="glass-card p-1 rounded-md">
+                  <Award className="h-5 w-5 text-blue-400" />
+                </div>
+                <div className="glass-card p-1 rounded-md">
+                  <Shield className="h-5 w-5 text-green-400" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
         <div className="space-divider my-8"></div>
         
-        <div className="text-center text-gray-400 text-sm">
+        <div className="flex flex-col md:flex-row justify-between text-gray-400 text-sm">
           <p>© {new Date().getFullYear()} PHOOEY. All rights reserved.</p>
-          <p className="mt-1">PHOOEY is not affiliated with NASA or the Apollo program.</p>
+          <div className="flex space-x-6 mt-2 md:mt-0">
+            <a href="#" className="hover:text-space-blue transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-space-blue transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-space-blue transition-colors">Contact</a>
+          </div>
         </div>
+        
+        <p className="mt-4 text-center text-gray-500 text-xs">
+          PHOOEY is not affiliated with NASA or the Apollo program. Cryptocurrency investments involve risk.
+        </p>
       </div>
     </footer>
   );

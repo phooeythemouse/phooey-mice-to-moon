@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Clock, Flag, Microscope, Star, Award, Moon, Rocket, Home } from 'lucide-react';
+import { Clock, Flag, Microscope, Star, Award, Moon, Rocket, Home, Zap, DollarSign } from 'lucide-react';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -90,7 +90,7 @@ const AboutPage = () => {
           </SectionHeading>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="glass-card p-8">
+            <div className="glass-card p-8 hover:shadow-glow transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-6">The Final Journey</h3>
               <p className="text-gray-300 mb-4">
                 Launched on December 7, 1972, Apollo 17 was commanded by Eugene Cernan, with Harrison Schmitt as lunar module pilot and Ronald Evans as command module pilot.
@@ -103,7 +103,7 @@ const AboutPage = () => {
               </p>
             </div>
             
-            <div className="glass-card p-8">
+            <div className="glass-card p-8 hover:shadow-glow transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-6">The BIOCORE Experiment</h3>
               <p className="text-gray-300 mb-4">
                 BIOCORE (Biological Cosmic Ray Experiment) was designed to assess the impact of cosmic rays on living organisms during spaceflight.
@@ -119,9 +119,56 @@ const AboutPage = () => {
         </div>
       </section>
       
-      {/* Timeline Section */}
+      {/* The Real Lunar Mice Heroes Section */}
       <section className="py-20 relative">
         <div className="absolute left-0 right-0 h-full bg-space-purple/5 transform -skew-y-6 z-0"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <SectionHeading subtitle="Discover the remarkable stories of these tiny pioneering astronauts who made scientific history.">
+            The Real Lunar Mice Heroes
+          </SectionHeading>
+          
+          <div className="glass-card p-8 mb-10 hover:shadow-glow transition-all duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div>
+                <h4 className="text-xl font-bold text-space-accent mb-3">Fun Fact #1</h4>
+                <p className="text-gray-300">
+                  The mice were pocket mice (Perognathus longimembris), chosen because they don't need free water to drink - they get moisture from their food, making them perfect for space travel.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-xl font-bold text-space-accent mb-3">Fun Fact #2</h4>
+                <p className="text-gray-300">
+                  These mice traveled over half a million miles during their lunar journey - making them the first rodents to orbit another celestial body.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-xl font-bold text-space-accent mb-3">Fun Fact #3</h4>
+                <p className="text-gray-300">
+                  The mice were housed in special containers with life support systems that maintained pressure, temperature, and air quality throughout their historic journey.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
+            {mice.map((mouse, index) => (
+              <MouseCharacter 
+                key={index} 
+                name={mouse.name} 
+                id={mouse.id} 
+                description={mouse.description}
+                animationClass={`animate-float`}
+                style={{ animationDelay: `${index * 0.5}s` }}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* Timeline Section */}
+      <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <SectionHeading subtitle="Follow the journey of our five space-traveling mice during the historic Apollo 17 mission.">
             Mission Timeline
@@ -142,7 +189,7 @@ const AboutPage = () => {
                   
                   {/* Content */}
                   <div className={`pl-12 md:pl-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-16' : 'md:pl-16'}`}>
-                    <div className="glass-card p-6">
+                    <div className="glass-card p-6 hover:shadow-glow transition-all duration-300">
                       <span className="text-sm text-space-accent font-semibold block mb-2">{event.date}</span>
                       <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
                       <p className="text-gray-300">{event.description}</p>
@@ -158,35 +205,91 @@ const AboutPage = () => {
         </div>
       </section>
       
-      {/* Meet the Mice Section */}
+      {/* PHOOEY's Mission to the Crypto Moon */}
       <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeading subtitle="Get to know the five pocket mice who made history as the first of their kind to orbit the Moon.">
-            Meet The Space Pioneers
+          <SectionHeading subtitle="How we're honoring the legacy of these brave space pioneers through blockchain technology.">
+            PHOOEY's Mission to the Crypto Moon
           </SectionHeading>
           
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
-            {mice.map((mouse, index) => (
-              <MouseCharacter 
-                key={index} 
-                name={mouse.name} 
-                id={mouse.id} 
-                description={mouse.description}
-                animationClass={`animate-float`}
-                style={{ animationDelay: `${index * 0.5}s` }}
-              />
-            ))}
+          <div className="glass-card p-8 hover:shadow-glow transition-all duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-6">Preserving History Through Blockchain</h3>
+                <p className="text-gray-300 mb-4">
+                  PHOOEY uses blockchain technology to immortalize the story of these pioneering mice. Through our token and NFT collection, we're ensuring that their contribution to science isn't forgotten.
+                </p>
+                <p className="text-gray-300 mb-4">
+                  Each transaction on our network contains a tiny piece of their story, permanently embedded in the Solana blockchain - creating an unalterable record of their historic journey.
+                </p>
+                <p className="text-gray-300">
+                  Our community-driven initiatives aim to increase awareness about these unsung heroes of space exploration, with a portion of proceeds supporting STEM education focused on space sciences.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-6">Building A New Kind of Community</h3>
+                <p className="text-gray-300 mb-4">
+                  Just as these five mice were pioneers in space exploration, PHOOEY holders are pioneers in a new kind of community that bridges science, history, and crypto culture.
+                </p>
+                <p className="text-gray-300 mb-4">
+                  Our governance system allows token holders to vote on community initiatives, charity donations, and even scientific sponsorships - creating a decentralized force for education and awareness.
+                </p>
+                <p className="text-gray-300">
+                  Through digital collectibles, interactive experiences, and community events, we're creating new ways to engage with both space history and cutting-edge technology.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Why Space Matters to Memecoins */}
+      <section className="py-20 relative">
+        <div className="absolute left-0 right-0 h-full bg-space-purple/5 transform skew-y-6 z-0"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <SectionHeading subtitle="How the final frontier inspires the new generation of cryptocurrency projects.">
+            Why Space Matters to Memecoins
+          </SectionHeading>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="glass-card p-8 hover:shadow-glow transition-all duration-300">
+              <div className="w-16 h-16 mx-auto bg-space-blue rounded-full flex items-center justify-center mb-6">
+                <Rocket className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">The Explorer's Mindset</h3>
+              <p className="text-gray-300 text-center">
+                Both space exploration and cryptocurrency represent frontiers of human innovation. The "moonshot" mentality connects these worlds, inspiring communities to push boundaries.
+              </p>
+            </div>
+            
+            <div className="glass-card p-8 hover:shadow-glow transition-all duration-300">
+              <div className="w-16 h-16 mx-auto bg-space-accent rounded-full flex items-center justify-center mb-6">
+                <Zap className="h-8 w-8 text-space-dark" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">Technological Innovation</h3>
+              <p className="text-gray-300 text-center">
+                Space programs pioneered technologies we use daily. Similarly, blockchain is transforming how we think about value, ownership, and community governance.
+              </p>
+            </div>
+            
+            <div className="glass-card p-8 hover:shadow-glow transition-all duration-300">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-space-blue to-space-accent rounded-full flex items-center justify-center mb-6">
+                <DollarSign className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">Community Power</h3>
+              <p className="text-gray-300 text-center">
+                Just as space missions require collective effort, successful crypto projects depend on passionate communities working toward shared goals and visions.
+              </p>
+            </div>
           </div>
           
-          <div className="mt-16 glass-card p-8">
-            <h3 className="text-2xl font-bold text-white mb-6">The Scientific Legacy</h3>
-            <p className="text-gray-300 mb-4">
-              The BIOCORE experiment with these five mice provided valuable data about the effects of cosmic radiation on living organisms, 
-              contributing to our understanding of space biology and helping pave the way for future long-duration space missions.
-            </p>
-            <p className="text-gray-300">
-              Though their time in space was brief, their contribution to science was significant. The PHOOEY token celebrates their 
-              pioneering spirit and the sense of adventure that drives both space exploration and the crypto community.
+          <div className="mt-16 glass-card p-8 hover:shadow-glow transition-all duration-300">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center">The PHOOEY Difference</h3>
+            <p className="text-gray-300 text-center max-w-3xl mx-auto">
+              While many memecoins simply appropriate random themes for short-term hype, PHOOEY has authentic roots in real history. 
+              We're not just using space imagery for marketing — we're celebrating actual scientific pioneers and creating 
+              lasting value through education, community building, and technological innovation on the Solana blockchain.
             </p>
           </div>
         </div>
