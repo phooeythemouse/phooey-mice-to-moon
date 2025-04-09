@@ -21,35 +21,35 @@ const HomePage = () => {
       name: 'Fe', 
       id: 'A3305', 
       animationDelay: 0, 
-      imageUrl: '/lovable-uploads/d5884143-12fb-4fd6-8f0b-6ceb39d3dd03.png',
+      imageUrl: '/lovable-uploads/fe.png',
       description: 'The brave leader who kept the team steady through cosmic storms.'
     },
     { 
       name: 'Fi', 
       id: 'A3326', 
       animationDelay: 1, 
-      imageUrl: '/lovable-uploads/c2ea08fd-472a-45c0-812d-3924c8ae9f77.png',
+      imageUrl: '/lovable-uploads/fi.png',
       description: 'The navigator with a knack for sniffing out paths among the stars.'
     },
     { 
       name: 'Fo', 
       id: 'A3352', 
       animationDelay: 2, 
-      imageUrl: '/lovable-uploads/7ee01889-a0df-451b-a32d-18b660ef6a91.png',
+      imageUrl: '/lovable-uploads/fo.png',
       description: 'The dreamer who gazed at distant galaxies with curious eyes.'
     },
     { 
       name: 'Fum', 
       id: 'A3356', 
       animationDelay: 3, 
-      imageUrl: '/lovable-uploads/b6c696f1-e2b7-48db-a7c9-5f283e6380c2.png',
+      imageUrl: '/lovable-uploads/fum.png',
       description: 'The engineer who saved the day with innovative solutions.'
     },
     { 
       name: 'Phooey', 
       id: 'A3400', 
       animationDelay: 4, 
-      imageUrl: '/lovable-uploads/a3e2a3d1-5e32-4ac8-9157-9be4f86bb31d.png',
+      imageUrl: '/lovable-uploads/phooey.png',
       description: 'The scout who was the first mouse to spot Earthrise from lunar orbit.'
     },
   ];
