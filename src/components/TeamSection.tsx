@@ -1,6 +1,7 @@
 
 import React from 'react';
 import SectionHeading from './SectionHeading';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface TeamMember {
   name: string;
@@ -51,12 +52,14 @@ const TeamSection: React.FC = () => {
               className="glass-card p-6 flex flex-col items-center text-center hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="w-32 h-32 rounded-full overflow-hidden mb-6">
-                <img 
-                  src={member.imageUrl} 
-                  alt={member.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+                <AspectRatio ratio={1/1}>
+                  <img 
+                    src={member.imageUrl} 
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </AspectRatio>
               </div>
               <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
               <p className="text-sm text-space-accent mb-4">{member.role}</p>

@@ -1,8 +1,9 @@
 
 import React from 'react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface AspectRatioContainerProps {
-  ratio: string; // Format: 'w-h', e.g. '16-9'
+  ratio: number; // Instead of string, we'll use a number representing the aspect ratio
   children: React.ReactNode;
   className?: string;
 }
@@ -12,14 +13,11 @@ const AspectRatioContainer: React.FC<AspectRatioContainerProps> = ({
   children, 
   className = '' 
 }) => {
-  const [width, height] = ratio.split('-').map(Number);
-  const paddingTop = `${(height / width) * 100}%`;
-  
   return (
-    <div className={`relative ${className}`} style={{ paddingTop }}>
-      <div className="absolute inset-0">
+    <div className={`overflow-hidden ${className}`}>
+      <AspectRatio ratio={ratio} className="w-full">
         {children}
-      </div>
+      </AspectRatio>
     </div>
   );
 };
