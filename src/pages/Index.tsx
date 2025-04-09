@@ -10,15 +10,23 @@ import StarryBackground from '@/components/StarryBackground';
 import MouseCharacter from '@/components/MouseCharacter';
 import TokenStats from '@/components/TokenStats';
 import MoonBackground from '@/components/MoonBackground';
+import AboutContent from '@/components/AboutContent';
 
 const HomePage = () => {
   const mice = [
-    { name: 'Fe', id: 'A3305', animationDelay: 0 },
-    { name: 'Fi', id: 'A3326', animationDelay: 1 },
-    { name: 'Fo', id: 'A3352', animationDelay: 2 },
-    { name: 'Fum', id: 'A3356', animationDelay: 3 },
-    { name: 'Phooey', id: 'A3400', animationDelay: 4 },
+    { name: 'Fe', id: 'A3305', animationDelay: 0, imageUrl: '/lovable-uploads/fe.png' },
+    { name: 'Fi', id: 'A3326', animationDelay: 1, imageUrl: '/lovable-uploads/fi.png' },
+    { name: 'Fo', id: 'A3352', animationDelay: 2, imageUrl: '/lovable-uploads/fo.png' },
+    { name: 'Fum', id: 'A3356', animationDelay: 3, imageUrl: '/lovable-uploads/fum.png' },
+    { name: 'Phooey', id: 'A3400', animationDelay: 4, imageUrl: '/lovable-uploads/phooey.png' },
   ];
+
+  const handleJoinMission = () => {
+    toast.info("Join the Mission", {
+      description: "We're preparing for launch! Stay tuned for more details.",
+      duration: 3000,
+    });
+  };
 
   useEffect(() => {
     // Welcome toast notification
@@ -40,7 +48,7 @@ const HomePage = () => {
           <div className="flex flex-col items-center text-center mb-12">
             <div className="mouse-shadow rounded-full bg-space-purple/30 p-6 mb-6 animate-float">
               <img 
-                src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                src="/lovable-uploads/phooey-icon.png" 
                 alt="PHOOEY" 
                 className="w-28 h-28 md:w-32 md:h-32 object-contain"
               />
@@ -53,7 +61,10 @@ const HomePage = () => {
               Celebrating the adventurous spirit of five legendary mice who orbited the Moon on the Apollo 17 mission.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <button className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300">
+              <button 
+                onClick={handleJoinMission}
+                className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300"
+              >
                 Join the Mission
               </button>
               <Link to="/nft" className="btn-outline border-2 border-space-accent text-space-accent hover:bg-space-accent/20 font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300">
@@ -101,7 +112,7 @@ const HomePage = () => {
             <div className="glass-card p-8 hover:shadow-glow transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 mx-auto bg-gradient-to-br from-space-blue to-space-accent rounded-full flex items-center justify-center mb-6">
                 <img 
-                  src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                  src="/lovable-uploads/phooey-icon.png" 
                   alt="PHOOEY" 
                   className="h-8 w-8" 
                 />
@@ -114,6 +125,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* About Section */}
+      <AboutContent />
       
       {/* Mouse Characters Section */}
       <section className="py-20 relative">
@@ -134,6 +148,7 @@ const HomePage = () => {
                 id={mouse.id} 
                 animationClass={`animate-float`}
                 style={{ animationDelay: `${mouse.animationDelay * 0.5}s` }}
+                imageUrl={mouse.imageUrl}
               />
             ))}
           </div>
@@ -204,24 +219,36 @@ const HomePage = () => {
             <div className="space-divider mt-6 max-w-xs mx-auto"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {['Twitter', 'Discord', 'Telegram'].map((platform, index) => (
-              <a 
-                href="#" 
-                key={index}
-                className="glass-card p-8 text-center hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
-              >
-                <div className="w-16 h-16 mx-auto bg-space-blue rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  {platform === 'Twitter' && <ExternalLink className="h-8 w-8 text-white" />}
-                  {platform === 'Discord' && <ExternalLink className="h-8 w-8 text-white" />}
-                  {platform === 'Telegram' && <ExternalLink className="h-8 w-8 text-white" />}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Join us on {platform}</h3>
-                <p className="text-gray-300">
-                  Connect with other PHOOEY holders and stay updated on the latest news.
-                </p>
-              </a>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <a 
+              href="https://twitter.com/phooeythemouse" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass-card p-8 text-center hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+            >
+              <div className="w-16 h-16 mx-auto bg-space-blue rounded-full flex items-center justify-center mb-6">
+                <SocialIcon type="twitter" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Join us on Twitter</h3>
+              <p className="text-gray-300">
+                Connect with other PHOOEY holders and stay updated on the latest news.
+              </p>
+            </a>
+
+            <a 
+              href="https://t.me/phooeythemouse" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass-card p-8 text-center hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+            >
+              <div className="w-16 h-16 mx-auto bg-space-blue rounded-full flex items-center justify-center mb-6">
+                <SocialIcon type="telegram" size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Join us on Telegram</h3>
+              <p className="text-gray-300">
+                Connect with other PHOOEY holders and stay updated on the latest news.
+              </p>
+            </a>
           </div>
           
           <div className="text-center mt-12">

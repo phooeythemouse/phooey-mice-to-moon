@@ -117,7 +117,7 @@ const RocketGame: React.FC<RocketGameProps> = ({ walletConnected }) => {
       setIsLaunching(false);
       setIsFlying(false);
       setCanPlay(false);
-      setCooldownTime(30); // 30 second cooldown
+      setCooldownTime(10); // Reduced to 10 seconds for better UX
     }, 2000);
   };
   
@@ -152,10 +152,10 @@ const RocketGame: React.FC<RocketGameProps> = ({ walletConnected }) => {
   return (
     <div className="flex flex-col items-center">
       {/* Game interface */}
-      <div className="relative bg-gradient-to-b from-space-dark to-space-purple/30 w-full h-[500px] rounded-2xl overflow-hidden mb-8" ref={gameAreaRef}>
+      <div className="relative bg-gradient-to-b from-space-dark to-space-purple/30 w-full h-[500px] rounded-2xl overflow-hidden mb-8 hardware-accelerated" ref={gameAreaRef}>
         {/* Stars background */}
         <div className="absolute inset-0">
-          {Array.from({ length: 50 }).map((_, i) => (
+          {Array.from({ length: 30 }).map((_, i) => (
             <div 
               key={i}
               className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
@@ -169,7 +169,7 @@ const RocketGame: React.FC<RocketGameProps> = ({ walletConnected }) => {
         </div>
         
         {/* Moon at the top */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full bg-gray-200 shadow-lg">
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full bg-gray-200 shadow-lg hardware-accelerated">
           <div className="absolute top-2 left-5 w-4 h-4 rounded-full bg-gray-300"></div>
           <div className="absolute top-10 left-12 w-3 h-3 rounded-full bg-gray-300"></div>
           <div className="absolute top-6 left-3 w-2 h-2 rounded-full bg-gray-300"></div>
@@ -178,7 +178,7 @@ const RocketGame: React.FC<RocketGameProps> = ({ walletConnected }) => {
         {/* Rocket */}
         <div 
           ref={rocketRef}
-          className={`absolute left-1/2 transform -translate-x-1/2 transition-all duration-200 ${
+          className={`absolute left-1/2 transform -translate-x-1/2 transition-all duration-200 hardware-accelerated ${
             isFlying ? 'animate-float' : ''
           }`}
           style={getRocketStyle()}

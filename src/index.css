@@ -42,6 +42,10 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply bg-space-dark text-foreground font-sans overflow-x-hidden;
     font-family: 'Exo 2', sans-serif;
@@ -51,8 +55,26 @@
     font-family: 'Space Mono', monospace;
   }
   
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
   .space-bg {
     @apply bg-space-dark relative overflow-hidden;
+    content-visibility: auto;
   }
   
   .stars {
@@ -65,10 +87,13 @@
                     radial-gradient(2px 2px at 160px 120px, white, rgba(0, 0, 0, 0));
     background-repeat: repeat;
     background-size: 200px 200px;
+    will-change: transform;
   }
   
   .glass-card {
     @apply backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl;
+    transform: translateZ(0);
+    will-change: transform, opacity;
   }
   
   .text-gradient {
@@ -81,6 +106,7 @@
   
   .btn-glow {
     box-shadow: 0 0 15px 2px rgba(51, 195, 240, 0.5);
+    will-change: transform, opacity, box-shadow;
   }
   
   .shadow-glow {
@@ -89,6 +115,7 @@
   
   .btn-outline {
     box-shadow: 0 0 10px -2px rgba(214, 188, 250, 0.5);
+    will-change: transform, opacity, box-shadow;
   }
   
   .space-divider {
@@ -112,6 +139,11 @@
     to { transform: scale(1); opacity: 1; }
   }
   
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+  
   .animate-scale-in {
     animation: scale-in 0.3s ease-out forwards;
   }
@@ -122,6 +154,10 @@
   
   .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-twinkle {
+    animation: twinkle 3s ease-in-out infinite;
   }
   
   /* Media queries for responsive design */
@@ -137,5 +173,12 @@
     h2 {
       @apply text-2xl;
     }
+  }
+  
+  /* Performance optimizations */
+  .hardware-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
   }
 }

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,6 +33,13 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleBuyPhooey = () => {
+    toast.info("Coming Soon!", {
+      description: "Token purchase will be available after launch",
+      duration: 3000,
+    });
+  };
+
   return (
     <nav className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
@@ -46,7 +54,7 @@ const Navbar = () => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-space-blue/20 group-hover:bg-space-blue/30 transform scale-125 group-hover:scale-150 transition-all duration-300"></div>
                 <img 
-                  src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                  src="/lovable-uploads/phooey-icon.png" 
                   alt="PHOOEY" 
                   className="h-10 w-10 relative z-10 animate-float" 
                 />
@@ -70,7 +78,10 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              <button className="ml-4 btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105 duration-300 flex items-center">
+              <button 
+                onClick={handleBuyPhooey}
+                className="ml-4 btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105 duration-300 flex items-center"
+              >
                 <Moon className="h-4 w-4 mr-1" />
                 <span>Buy PHOOEY</span>
               </button>
@@ -103,7 +114,10 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <button className="btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full mt-4 transition-all self-start mx-3 flex items-center">
+            <button 
+              onClick={handleBuyPhooey}
+              className="btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full mt-4 transition-all self-start mx-3 flex items-center"
+            >
               <Moon className="h-4 w-4 mr-1" />
               <span>Buy PHOOEY</span>
             </button>

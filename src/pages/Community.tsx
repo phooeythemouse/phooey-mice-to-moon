@@ -1,33 +1,28 @@
 
 import React from 'react';
-import { Twitter, MessageCircle, Send, Rss, Users, Share2, ArrowRight } from 'lucide-react';
+import { Share2, ArrowRight } from 'lucide-react';
+import { toast } from 'sonner';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import StarryBackground from '@/components/StarryBackground';
 import SectionHeading from '@/components/SectionHeading';
+import SocialIcon from '@/components/SocialIcon';
 
 const CommunityPage = () => {
   const socialPlatforms = [
     {
       name: "Twitter",
-      icon: <Twitter className="h-8 w-8" />,
+      icon: <SocialIcon type="twitter" size={24} />,
       color: "bg-blue-400",
-      url: "#",
+      url: "https://twitter.com/phooeythemouse",
       description: "Follow for the latest updates and announcements"
     },
     {
-      name: "Discord",
-      icon: <MessageCircle className="h-8 w-8" />,
-      color: "bg-indigo-500",
-      url: "#",
-      description: "Join discussions and connect with other PHOOEY holders"
-    },
-    {
       name: "Telegram",
-      icon: <Send className="h-8 w-8" />,
+      icon: <SocialIcon type="telegram" size={24} />,
       color: "bg-blue-500",
-      url: "#",
+      url: "https://t.me/phooeythemouse",
       description: "Get instant notifications and chat with the community"
     }
   ];
@@ -46,7 +41,7 @@ const CommunityPage = () => {
     {
       date: "June 5, 2023",
       title: "Social Media Channels Live",
-      content: "Follow us on Twitter, join our Discord, and Telegram for the latest updates and to connect with the community."
+      content: "Follow us on Twitter and join our Telegram for the latest updates and to connect with the community."
     }
   ];
 
@@ -54,24 +49,31 @@ const CommunityPage = () => {
     {
       name: "Cosmic Carl",
       role: "Community Manager",
-      imageUrl: "https://source.unsplash.com/random/100x100/?portrait,1"
+      imageUrl: "/lovable-uploads/carl.png"
     },
     {
       name: "Lunar Laura",
       role: "Content Creator",
-      imageUrl: "https://source.unsplash.com/random/100x100/?portrait,2"
+      imageUrl: "/lovable-uploads/laura.png"
     },
     {
       name: "Apollo Alex",
       role: "Technical Advisor",
-      imageUrl: "https://source.unsplash.com/random/100x100/?portrait,3"
+      imageUrl: "/lovable-uploads/alex.png"
     },
     {
       name: "Stellar Sara",
       role: "Marketing Lead",
-      imageUrl: "https://source.unsplash.com/random/100x100/?portrait,4"
+      imageUrl: "/lovable-uploads/sara.png"
     }
   ];
+
+  const handleJoinCommunity = () => {
+    toast.info("Join Our Community", {
+      description: "Follow our Twitter and join our Telegram group to connect with other members!",
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="space-bg min-h-screen">
@@ -100,11 +102,13 @@ const CommunityPage = () => {
             Social Platforms
           </SectionHeading>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {socialPlatforms.map((platform, index) => (
               <a 
                 href={platform.url}
                 key={index} 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="glass-card p-8 text-center hover:bg-white/10 transition-colors group"
               >
                 <div className={`w-16 h-16 mx-auto ${platform.color} rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
@@ -134,7 +138,9 @@ const CommunityPage = () => {
           
           <div className="glass-card p-8">
             <div className="flex items-center mb-8">
-              <Rss className="h-6 w-6 text-space-blue mr-3" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-space-blue mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
               <h3 className="text-xl font-bold text-white">News & Announcements</h3>
             </div>
             
@@ -160,7 +166,9 @@ const CommunityPage = () => {
           
           <div className="glass-card p-8">
             <div className="flex items-center mb-8">
-              <Users className="h-6 w-6 text-space-blue mr-3" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-space-blue mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
               <h3 className="text-xl font-bold text-white">The Team Behind PHOOEY</h3>
             </div>
             
@@ -249,12 +257,22 @@ const CommunityPage = () => {
               Become part of our growing community of space enthusiasts and crypto explorers today!
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <button className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-lg transition-all">
-                Join Discord
-              </button>
-              <button className="bg-transparent hover:bg-white/10 text-white border border-white/20 font-bold py-3 px-8 rounded-lg transition-all">
+              <a 
+                href="https://t.me/phooeythemouse"
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-lg transition-all"
+              >
+                Join Telegram
+              </a>
+              <a
+                href="https://twitter.com/phooeythemouse"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-transparent hover:bg-white/10 text-white border border-white/20 font-bold py-3 px-8 rounded-lg transition-all"
+              >
                 Follow on Twitter
-              </button>
+              </a>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowRight, BadgeCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -16,37 +17,49 @@ const NFTPage = () => {
       role: 'The Leader',
       story: "Squeaky was the bravest mouse aboard the lunar orbiter. With a tiny helmet and a huge heart, he kept the team steady through meteor showers and cosmic storms. Legend says he even squeaked the first words on the far side of the Moon: 'We made it!'",
       appearance: 'Silver space suit, gold-tinted helmet, confident stance, little command badge on chest.',
-      animationDelay: 0
+      animationDelay: 0,
+      imageUrl: '/lovable-uploads/fe.png'
     },
     {
       name: 'AstroChew',
       role: 'The Navigator',
       story: "AstroChew had a knack for sniffing out the right paths among the stars. His sharp sense of smell led the crew around hidden space debris. When things got tough, he simply nibbled on his favorite lunar snack bar and charted a new course!",
       appearance: 'Compact, with oversized astro-gloves, chewing a mini snack bar floating inside helmet.',
-      animationDelay: 1
+      animationDelay: 1,
+      imageUrl: '/lovable-uploads/fi.png'
     },
     {
       name: 'LunarWhiskers',
       role: 'The Dreamer',
       story: "LunarWhiskers was the dreamer of the crew, always gazing at distant galaxies with his bright, curious eyes. He believed mice could colonize the Moon — and maybe even Mars. His dreams sparked the mission's true spirit.",
       appearance: 'Big sparkling eyes, slightly messy fur, dreamy expression, floating inside a low-gravity pod.',
-      animationDelay: 2
+      animationDelay: 2,
+      imageUrl: '/lovable-uploads/fo.png'
     },
     {
       name: 'NebulaNibbler',
       role: 'The Engineer',
       story: "When the ship's mini-engine broke, NebulaNibbler saved the day! Using only two cheese wrappers and a tail-spin move, he patched the problem mid-flight. His technical skills were unmatched—even by NASA's top mice!",
       appearance: 'Goggles on helmet, small backpack with wires and tools, biting on a cable playfully.',
-      animationDelay: 3
+      animationDelay: 3,
+      imageUrl: '/lovable-uploads/fum.png'
     },
     {
       name: 'StarTail',
       role: 'The Scout',
       story: "StarTail was the first mouse to spot Earthrise from lunar orbit. Fast, alert, and always a step ahead, he would scout dangerous sectors before the crew passed. Some say he has stardust woven into his tail.",
       appearance: 'Sleek space suit, glowing tail tip (like a comet), striking a ready-for-action pose.',
-      animationDelay: 4
+      animationDelay: 4,
+      imageUrl: '/lovable-uploads/phooey.png'
     }
   ];
+
+  const handleConnectWallet = () => {
+    toast.info("Wallet Connection", {
+      description: "NFT minting will be available soon after launch",
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="space-bg min-h-screen">
@@ -82,6 +95,7 @@ const NFTPage = () => {
                 story={mouse.story}
                 appearance={mouse.appearance}
                 animationDelay={mouse.animationDelay}
+                imageUrl={mouse.imageUrl}
               />
             ))}
           </div>
@@ -110,7 +124,7 @@ const NFTPage = () => {
             <div className="glass-card p-8 hover:shadow-glow transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 mx-auto bg-space-accent rounded-full flex items-center justify-center mb-6">
                 <img 
-                  src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+                  src="/lovable-uploads/phooey-icon.png" 
                   alt="PHOOEY" 
                   className="h-8 w-8" 
                 />
@@ -170,7 +184,10 @@ const NFTPage = () => {
                   Connect your wallet and mint your own legendary space mouse. Each NFT is randomly generated with unique traits and accessories.
                 </p>
                 <div className="flex justify-center">
-                  <button className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300">
+                  <button 
+                    onClick={handleConnectWallet}
+                    className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300"
+                  >
                     Connect Wallet to Mint
                   </button>
                 </div>
@@ -192,8 +209,13 @@ const NFTPage = () => {
               <Link to="/fun" className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300">
                 Visit Fun Zone
               </Link>
-              <a href="#" className="btn-outline border-2 border-space-accent text-space-accent hover:bg-space-accent/20 font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300">
-                Join Discord
+              <a 
+                href="https://t.me/phooeythemouse" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn-outline border-2 border-space-accent text-space-accent hover:bg-space-accent/20 font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300"
+              >
+                Join Telegram
               </a>
             </div>
           </div>

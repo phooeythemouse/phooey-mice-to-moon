@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { toast } from 'sonner';
 
 interface NFTCardProps {
   name: string;
@@ -8,6 +9,7 @@ interface NFTCardProps {
   story: string;
   appearance: string;
   animationDelay: number;
+  imageUrl: string;
 }
 
 const NFTCard: React.FC<NFTCardProps> = ({ 
@@ -15,7 +17,8 @@ const NFTCard: React.FC<NFTCardProps> = ({
   role, 
   story,
   appearance,
-  animationDelay 
+  animationDelay,
+  imageUrl
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -37,6 +40,13 @@ const NFTCard: React.FC<NFTCardProps> = ({
     }
   };
 
+  const handleMintClick = () => {
+    toast.info("NFT Minting Coming Soon", {
+      description: "The PHOOEY NFT collection will be available for minting soon!",
+      duration: 3000,
+    });
+  };
+
   return (
     <div 
       className={`glass-card overflow-hidden rounded-2xl transition-all duration-500 transform ${
@@ -48,12 +58,12 @@ const NFTCard: React.FC<NFTCardProps> = ({
     >
       {/* Card Header - Image */}
       <div className={`h-64 bg-gradient-to-br ${getGradient()} p-4 flex items-center justify-center relative overflow-hidden`}>
-        {/* This would ideally be replaced with actual NFT images */}
-        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center animate-float">
+        {/* Mouse image */}
+        <div className="w-40 h-40 flex items-center justify-center animate-float bg-transparent">
           <img 
-            src="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" 
+            src={imageUrl}
             alt={name} 
-            className="w-24 h-24 object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
         
@@ -94,7 +104,10 @@ const NFTCard: React.FC<NFTCardProps> = ({
         </HoverCard>
         
         <div className="mt-6">
-          <button className="w-full bg-gradient-to-r from-space-blue to-space-accent text-white font-bold py-3 rounded-lg hover:shadow-glow transition-all duration-300">
+          <button 
+            onClick={handleMintClick}
+            className="w-full bg-gradient-to-r from-space-blue to-space-accent text-white font-bold py-3 rounded-lg hover:shadow-glow transition-all duration-300"
+          >
             Mint Now
           </button>
         </div>

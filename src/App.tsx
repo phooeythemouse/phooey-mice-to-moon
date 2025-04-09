@@ -13,6 +13,9 @@ import Community from "./pages/Community";
 import Fun from "./pages/Fun";
 import NFT from "./pages/NFT";
 import NotFound from "./pages/NotFound";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -26,11 +29,11 @@ const App = () => (
         <meta property="og:title" content="PHOOEY Memecoin - First Lunar Meme" />
         <meta property="og:description" content="Celebrating the five legendary mice who orbited the Moon on Apollo 17. Join the lunar crypto adventure!" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" />
+        <meta property="og:image" content="/lovable-uploads/phooey-icon.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="PHOOEY Memecoin - First Lunar Meme" />
         <meta name="twitter:description" content="Celebrating the five legendary mice who orbited the Moon on Apollo 17. Join the lunar crypto adventure!" />
-        <meta name="twitter:image" content="/lovable-uploads/857b6350-e6b9-4a05-918e-c9e653305ab2.png" />
+        <meta name="twitter:image" content="/lovable-uploads/phooey-icon.png" />
       </Helmet>
       <Toaster />
       <Sonner />
@@ -42,6 +45,9 @@ const App = () => (
           <Route path="/nft" element={<NFT />} />
           <Route path="/community" element={<Community />} />
           <Route path="/fun" element={<Fun />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
