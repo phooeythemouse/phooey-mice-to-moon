@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight, ExternalLink, BadgeCheck, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -11,6 +10,7 @@ import MouseCharacter from '@/components/MouseCharacter';
 import TokenStats from '@/components/TokenStats';
 import MoonBackground from '@/components/MoonBackground';
 import AboutContent from '@/components/AboutContent';
+import SocialIcon from '@/components/SocialIcon';
 
 const HomePage = () => {
   const mice = [
