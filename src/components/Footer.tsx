@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ExternalLink, Shield, Zap, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -137,7 +136,6 @@ const Footer = () => {
               </li>
             </ul>
             
-            {/* Trust signals */}
             <div className="mt-6 space-y-2">
               <div className="flex items-center text-gray-300 text-sm">
                 <Shield className="mr-2 h-4 w-4 text-green-400" />
@@ -171,7 +169,6 @@ const Footer = () => {
               </button>
             </form>
             
-            {/* Partnerships */}
             <div className="mt-6">
               <h4 className="text-sm font-bold text-white mb-2">Partnerships</h4>
               <div className="flex flex-wrap gap-2">

@@ -20,9 +20,6 @@ const MouseCharacter: React.FC<MouseCharacterProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Match up the correct file by name
-  let imagePath = imageUrl;
-  
   return (
     <div
       className={`glass-card p-6 flex flex-col items-center text-center ${animationClass} transition-all duration-300 ${isHovered ? 'transform scale-105 shadow-glow' : ''}`}
@@ -32,7 +29,7 @@ const MouseCharacter: React.FC<MouseCharacterProps> = ({
     >
       <div className="w-28 h-28 rounded-full overflow-hidden bg-space-purple/30 mouse-shadow flex items-center justify-center mb-4">
         <img
-          src={imagePath}
+          src={imageUrl}
           alt={name}
           className="w-full h-full object-contain"
           loading="lazy"
