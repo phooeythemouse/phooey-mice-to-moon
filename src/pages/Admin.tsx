@@ -20,11 +20,9 @@ const Admin = () => {
       <Navbar />
       
       <main className="container mx-auto px-4 py-16 relative z-10">
-        <SectionHeading 
-          title="Admin Dashboard" 
-          subtitle="Manage your PHOOEY community data" 
-          className="mb-12"
-        />
+        <SectionHeading subtitle="Manage your PHOOEY community data">
+          Admin Dashboard
+        </SectionHeading>
         
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-gradient mb-6">Newsletter Subscribers</h2>

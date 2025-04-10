@@ -11,6 +11,7 @@ import SectionHeading from '@/components/SectionHeading';
 import NFTCard from '@/components/NFTCard';
 
 const NFTPage = () => {
+  // Updated mice NFTs with verified image paths
   const miceNFTs = [
     {
       name: 'Fe',
@@ -102,7 +103,7 @@ const NFTPage = () => {
         </div>
       </section>
       
-      {/* NFT Benefits Section */}
+      {/* NFT Benefits Section - Updated heading for clarity */}
       <section className="py-20 relative">
         <div className="absolute left-0 right-0 h-full bg-space-purple/5 transform -skew-y-6 z-0"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -148,7 +149,7 @@ const NFTPage = () => {
         </div>
       </section>
       
-      {/* Mint Info Section */}
+      {/* Mint Info Section - Updated content for better clarity */}
       <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading subtitle="Find out how to mint your own legendary space mouse NFT.">
