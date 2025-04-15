@@ -21,35 +21,35 @@ const HomePage = () => {
       name: 'Fe', 
       id: 'A3305', 
       animationDelay: 0, 
-      imageUrl: '/lovable-uploads/fe.png',
+      imageUrl: '/lovable-uploads/fe.webp',
       description: 'The brave leader who kept the team steady through cosmic storms.'
     },
     { 
       name: 'Fi', 
       id: 'A3326', 
       animationDelay: 1, 
-      imageUrl: '/lovable-uploads/fi.png',
+      imageUrl: '/lovable-uploads/fi.webp',
       description: 'The navigator with a knack for sniffing out paths among the stars.'
     },
     { 
       name: 'Fo', 
       id: 'A3352', 
       animationDelay: 2, 
-      imageUrl: '/lovable-uploads/fo.png',
+      imageUrl: '/lovable-uploads/fo.webp',
       description: 'The dreamer who gazed at distant galaxies with curious eyes.'
     },
     { 
       name: 'Fum', 
       id: 'A3356', 
       animationDelay: 3, 
-      imageUrl: '/lovable-uploads/fum.png',
+      imageUrl: '/lovable-uploads/fum.webp',
       description: 'The engineer who saved the day with innovative solutions.'
     },
     { 
       name: 'Phooey', 
       id: 'A3400', 
       animationDelay: 4, 
-      imageUrl: '/lovable-uploads/phooey.png',
+      imageUrl: '/lovable-uploads/phooey.webp',
       description: 'The scout who was the first mouse to spot Earthrise from lunar orbit.'
     },
   ];
