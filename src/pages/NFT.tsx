@@ -19,7 +19,7 @@ const NFTPage = () => {
       story: "Fe was the bravest mouse aboard the lunar orbiter. With a tiny helmet and a huge heart, he kept the team steady through meteor showers and cosmic storms. Legend says he even squeaked the first words on the far side of the Moon: 'We made it!'",
       appearance: 'Silver space suit, gold-tinted helmet, confident stance, little command badge on chest.',
       animationDelay: 0,
-      imageUrl: '/lovable-uploads/fe.png'
+      imageUrl: '/lovable-uploads/fe.webp'
     },
     {
       name: 'Fi',
@@ -27,7 +27,7 @@ const NFTPage = () => {
       story: "Fi had a knack for sniffing out the right paths among the stars. His sharp sense of smell led the crew around hidden space debris. When things got tough, he simply nibbled on his favorite lunar snack bar and charted a new course!",
       appearance: 'Compact, with oversized astro-gloves, chewing a mini snack bar floating inside helmet.',
       animationDelay: 1,
-      imageUrl: '/lovable-uploads/fi.png'
+      imageUrl: '/lovable-uploads/fi.webp'
     },
     {
       name: 'Fo',
@@ -35,7 +35,7 @@ const NFTPage = () => {
       story: "Fo was the dreamer of the crew, always gazing at distant galaxies with his bright, curious eyes. He believed mice could colonize the Moon — and maybe even Mars. His dreams sparked the mission's true spirit.",
       appearance: 'Big sparkling eyes, slightly messy fur, dreamy expression, floating inside a low-gravity pod.',
       animationDelay: 2,
-      imageUrl: '/lovable-uploads/fo.png'
+      imageUrl: '/lovable-uploads/fo.webp'
     },
     {
       name: 'Fum',
@@ -43,7 +43,7 @@ const NFTPage = () => {
       story: "When the ship's mini-engine broke, Fum saved the day! Using only two cheese wrappers and a tail-spin move, he patched the problem mid-flight. His technical skills were unmatched—even by NASA's top mice!",
       appearance: 'Goggles on helmet, small backpack with wires and tools, biting on a cable playfully.',
       animationDelay: 3,
-      imageUrl: '/lovable-uploads/fum.png'
+      imageUrl: '/lovable-uploads/fum.webp'
     },
     {
       name: 'Phooey',
@@ -51,7 +51,7 @@ const NFTPage = () => {
       story: "Phooey was the first mouse to spot Earthrise from lunar orbit. Fast, alert, and always a step ahead, he would scout dangerous sectors before the crew passed. Some say he has stardust woven into his tail.",
       appearance: 'Sleek space suit, glowing tail tip (like a comet), striking a ready-for-action pose.',
       animationDelay: 4,
-      imageUrl: '/lovable-uploads/phooey.png'
+      imageUrl: '/lovable-uploads/phooey.webp'
     }
   ];
 
