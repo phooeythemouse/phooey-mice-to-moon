@@ -18,6 +18,12 @@ if (isProduction) {
       console.info(`Page load time: ${pageLoadTime}ms`);
     }, 0);
   });
+  
+  // Log when routes change to help debug navigation
+  window.addEventListener('popstate', () => {
+    console.info(`Route changed to: ${window.location.pathname}`);
+  });
 }
 
+// Render the app
 root.render(<App />);

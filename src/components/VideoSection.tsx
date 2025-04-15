@@ -24,7 +24,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
             <h3 className="text-xl font-bold text-white mb-4">Apollo 17 Mission</h3>
             <AspectRatioContainer ratio={16/9} className="mb-4">
               <iframe 
-                src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g?si=Ev5FMdefL8DWTrLP" 
+                src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g" 
                 title="Apollo 17 Mission Video"
                 className="w-full h-full rounded"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -36,7 +36,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
               The Apollo 17 mission was the final mission of NASA's Apollo program and marks the most recent time humans traveled beyond low Earth orbit.
             </p>
             <a 
-              href="https://youtu.be/Dz7V8POeG6g?si=Ev5FMdefL8DWTrLP" 
+              href="https://youtu.be/Dz7V8POeG6g" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center text-space-blue hover:text-space-accent mt-4 transition-colors"
@@ -50,7 +50,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
             <h3 className="text-xl font-bold text-white mb-4">Animals in Space</h3>
             <AspectRatioContainer ratio={4/3} className="mb-4">
               <iframe 
-                src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs?si=gzGy4irq4e2aB6hZ" 
+                src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs" 
                 title="Animals in Space Video"
                 className="w-full h-full rounded"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -62,7 +62,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
               The United States Air Force documentary about animals in space reveals the important role these creatures played in the early days of space exploration.
             </p>
             <a 
-              href="https://youtu.be/dwLSbirbrIs?si=gzGy4irq4e2aB6hZ" 
+              href="https://youtu.be/dwLSbirbrIs" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center text-space-blue hover:text-space-accent mt-4 transition-colors"

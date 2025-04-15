@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,11 +52,11 @@ const Navbar = () => {
             <Link to="/" className="flex-shrink-0 flex items-center space-x-2 group">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-space-blue/20 group-hover:bg-space-blue/30 transform scale-125 group-hover:scale-150 transition-all duration-300"></div>
-                <img 
+                <OptimizedImage 
                   src="/lovable-uploads/phooey.webp" 
                   alt="PHOOEY" 
                   className="h-10 w-10 relative z-10 animate-float" 
-                  loading="eager"
+                  priority={true}
                 />
               </div>
               <span className="text-2xl font-bold text-gradient group-hover:scale-105 transition-transform duration-300">PHOOEY</span>

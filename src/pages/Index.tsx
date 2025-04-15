@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { ArrowRight, ExternalLink, BadgeCheck, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,6 +13,7 @@ import AboutContent from '@/components/AboutContent';
 import SocialIcon from '@/components/SocialIcon';
 import VideoSection from '@/components/VideoSection';
 import TeamSection from '@/components/TeamSection';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const HomePage = () => {
   const mice = [
@@ -80,10 +80,11 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col items-center text-center mb-12">
             <div className="mouse-shadow rounded-full bg-space-purple/30 p-6 mb-6 animate-float">
-              <img 
-                src="/lovable-uploads/032ecc7d-2031-458f-969b-5aa83db84f2b.png" 
+              <OptimizedImage 
+                src="/lovable-uploads/phooey.webp" 
                 alt="PHOOEY" 
                 className="w-28 h-28 md:w-32 md:h-32 object-contain"
+                priority={true}
               />
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4">
@@ -144,8 +145,8 @@ const HomePage = () => {
             
             <div className="glass-card p-8 hover:shadow-glow transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 mx-auto bg-gradient-to-br from-space-blue to-space-accent rounded-full flex items-center justify-center mb-6">
-                <img 
-                  src="/lovable-uploads/032ecc7d-2031-458f-969b-5aa83db84f2b.png" 
+                <OptimizedImage 
+                  src="/lovable-uploads/phooey.webp" 
                   alt="PHOOEY" 
                   className="h-8 w-8" 
                 />
