@@ -49,22 +49,22 @@ const CommunityPage = () => {
     {
       name: "Cosmic Carl",
       role: "Community Manager",
-      imageUrl: "/lovable-uploads/carl.png"
+      imageUrl: "/lovable-uploads/carl.webp"
     },
     {
       name: "Lunar Laura",
       role: "Content Creator",
-      imageUrl: "/lovable-uploads/laura.png"
+      imageUrl: "/lovable-uploads/laura.webp"
     },
     {
       name: "Apollo Alex",
       role: "Technical Advisor",
-      imageUrl: "/lovable-uploads/alex.png"
+      imageUrl: "/lovable-uploads/alex.webp"
     },
     {
       name: "Stellar Sara",
       role: "Marketing Lead",
-      imageUrl: "/lovable-uploads/sara.png"
+      imageUrl: "/lovable-uploads/sara.webp"
     }
   ];
 
