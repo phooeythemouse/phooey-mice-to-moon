@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps {
@@ -10,6 +10,7 @@ interface OptimizedImageProps {
   height?: number;
   priority?: boolean;
   onClick?: () => void;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
 const OptimizedImage = ({
@@ -20,9 +21,18 @@ const OptimizedImage = ({
   height,
   priority = false,
   onClick,
+  objectFit = 'cover',
 }: OptimizedImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [imageSrc, setImageSrc] = useState(src);
+
+  // Effect to reset states when src changes
+  useEffect(() => {
+    setIsLoaded(false);
+    setHasError(false);
+    setImageSrc(src);
+  }, [src]);
 
   const handleLoad = () => {
     setIsLoaded(true);
@@ -31,25 +41,46 @@ const OptimizedImage = ({
   const handleError = () => {
     setHasError(true);
     console.error(`Failed to load image: ${src}`);
+    setImageSrc('/placeholder.svg');
   };
 
   return (
-    <img
-      src={hasError ? '/placeholder.svg' : src}
-      alt={alt}
-      className={cn('transition-opacity duration-300', 
-        !isLoaded && 'opacity-0',
-        isLoaded && 'opacity-100',
-        className
+    <div className={cn(
+      'relative overflow-hidden', 
+      !width && !height && 'w-full h-full',
+      className
+    )}>
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-800/20 animate-pulse">
+          <div className="w-8 h-8 border-4 border-space-blue border-t-transparent rounded-full animate-spin"></div>
+        </div>
       )}
-      width={width}
-      height={height}
-      loading={priority ? 'eager' : 'lazy'}
-      decoding={priority ? 'sync' : 'async'}
-      onLoad={handleLoad}
-      onError={handleError}
-      onClick={onClick}
-    />
+      
+      <img
+        src={imageSrc}
+        alt={alt}
+        className={cn(
+          'transition-opacity duration-300',
+          !isLoaded && 'opacity-0',
+          isLoaded && 'opacity-100',
+          objectFit === 'cover' && 'object-cover',
+          objectFit === 'contain' && 'object-contain',
+          objectFit === 'fill' && 'object-fill',
+          objectFit === 'none' && 'object-none',
+          objectFit === 'scale-down' && 'object-scale-down',
+          width && 'w-auto',
+          height && 'h-auto',
+        )}
+        width={width}
+        height={height}
+        style={width || height ? { width: width || 'auto', height: height || 'auto' } : undefined}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        onLoad={handleLoad}
+        onError={handleError}
+        onClick={onClick}
+      />
+    </div>
   );
 };
 

@@ -3,6 +3,15 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Add Solana wallet type definitions to window object
+declare global {
+  interface Window {
+    solana?: any;
+    solflare?: any;
+    backpack?: any;
+  }
+}
+
 // Performance monitoring in production
 const isProduction = import.meta.env.PROD;
 

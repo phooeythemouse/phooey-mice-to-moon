@@ -9,8 +9,13 @@ import Footer from '@/components/Footer';
 import StarryBackground from '@/components/StarryBackground';
 import SectionHeading from '@/components/SectionHeading';
 import NFTCard from '@/components/NFTCard';
+import { useWallet } from '@/providers/WalletProvider';
+import WalletModal from '@/components/WalletModal';
 
 const NFTPage = () => {
+  const [walletModalOpen, setWalletModalOpen] = React.useState(false);
+  const { connected } = useWallet();
+
   // Updated mice NFTs with verified image paths
   const miceNFTs = [
     {
@@ -56,10 +61,14 @@ const NFTPage = () => {
   ];
 
   const handleConnectWallet = () => {
-    toast.info("Wallet Connection", {
-      description: "NFT minting will be available soon after launch",
-      duration: 3000,
-    });
+    if (connected) {
+      toast.info("Ready to Mint", {
+        description: "Minting will be available soon after launch",
+        duration: 3000,
+      });
+    } else {
+      setWalletModalOpen(true);
+    }
   };
 
   return (
@@ -103,7 +112,7 @@ const NFTPage = () => {
         </div>
       </section>
       
-      {/* NFT Benefits Section - Updated heading for clarity */}
+      {/* NFT Benefits Section */}
       <section className="py-20 relative">
         <div className="absolute left-0 right-0 h-full bg-space-purple/5 transform -skew-y-6 z-0"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -125,7 +134,7 @@ const NFTPage = () => {
             <div className="glass-card p-8 hover:shadow-glow transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 mx-auto bg-space-accent rounded-full flex items-center justify-center mb-6">
                 <img 
-                  src="/lovable-uploads/phooey-icon.png" 
+                  src="/lovable-uploads/phooey.webp" 
                   alt="PHOOEY" 
                   className="h-8 w-8" 
                 />
@@ -149,7 +158,7 @@ const NFTPage = () => {
         </div>
       </section>
       
-      {/* Mint Info Section - Updated content for better clarity */}
+      {/* Mint Info Section */}
       <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading subtitle="Find out how to mint your own legendary space mouse NFT.">
@@ -189,7 +198,7 @@ const NFTPage = () => {
                     onClick={handleConnectWallet}
                     className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300"
                   >
-                    Connect Wallet to Mint
+                    {connected ? "Ready to Mint" : "Connect Wallet to Mint"}
                   </button>
                 </div>
               </div>
@@ -223,6 +232,7 @@ const NFTPage = () => {
         </div>
       </section>
       
+      <WalletModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
       <Footer />
     </div>
   );

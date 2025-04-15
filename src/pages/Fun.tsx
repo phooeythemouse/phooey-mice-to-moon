@@ -1,27 +1,16 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Rocket, Timer, Award, Zap, Wallet } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Timer, Award, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import StarryBackground from '@/components/StarryBackground';
 import RocketGame from '@/components/RocketGame';
+import { useWallet } from '@/providers/WalletProvider';
 
 const FunPage = () => {
-  const [walletConnected, setWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
-
-  const connectWallet = () => {
-    // Simulate wallet connection
-    const randomAddress = `Sol${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}...${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
-    setWalletAddress(randomAddress);
-    setWalletConnected(true);
-    
-    toast.success('Wallet connected!', {
-      description: "You're now eligible for PHOOEY airdrops!",
-    });
-  };
+  const { connected, walletAddress } = useWallet();
 
   return (
     <div className="space-bg min-h-screen">
@@ -41,27 +30,6 @@ const FunPage = () => {
         </div>
       </section>
       
-      {/* Wallet Connection Section */}
-      {!walletConnected && (
-        <section className="py-10 relative">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="glass-card p-8 text-center hover:shadow-glow transition-all duration-300">
-              <h2 className="text-2xl font-bold text-white mb-4">Connect Your Wallet</h2>
-              <p className="text-gray-300 mb-6">
-                Connect your Solana wallet to be eligible for PHOOEY airdrops when you win in the game.
-              </p>
-              <button 
-                onClick={connectWallet}
-                className="btn-glow bg-space-blue hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300"
-              >
-                <Wallet className="inline-block mr-2 h-5 w-5" />
-                Connect Wallet
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
-      
       {/* Game Section */}
       <section className="py-10 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,16 +41,16 @@ const FunPage = () => {
           </div>
           
           {/* Wallet info if connected */}
-          {walletConnected && (
+          {connected && (
             <div className="glass-card inline-flex items-center px-4 py-2 mx-auto mb-8 rounded-full">
               <div className="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-              <span className="text-sm text-gray-300">Connected: {walletAddress}</span>
+              <span className="text-sm text-gray-300">Connected: {walletAddress?.substring(0, 4)}...{walletAddress?.substring(walletAddress.length - 4)}</span>
             </div>
           )}
           
           {/* Game Component */}
           <div className="glass-card p-6 max-w-4xl mx-auto hover:shadow-glow transition-all duration-300">
-            <RocketGame walletConnected={walletConnected} />
+            <RocketGame walletConnected={connected} />
           </div>
         </div>
       </section>
@@ -152,7 +120,11 @@ const FunPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="glass-card p-8 hover:shadow-glow transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 mx-auto bg-space-blue rounded-full flex items-center justify-center mb-6">
-                <Rocket className="h-8 w-8 text-white" />
+                <svg className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 16C12 16 16 14 16 10V4L12 2L8 4V10C8 14 12 16 12 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 17V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 21H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
               <h3 className="text-xl font-bold text-white mb-4 text-center">1. Launch Your Rocket</h3>
               <p className="text-gray-300 text-center">

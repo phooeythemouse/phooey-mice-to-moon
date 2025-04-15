@@ -2,6 +2,7 @@
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import AspectRatioContainer from './AspectRatioContainer';
+import OptimizedImage from './OptimizedImage';
 
 interface VideoSectionProps {
   className?: string;
@@ -22,7 +23,19 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="glass-card p-6 overflow-hidden">
             <h3 className="text-xl font-bold text-white mb-4">Apollo 17 Mission</h3>
-            <AspectRatioContainer ratio={16/9} className="mb-4">
+            <AspectRatioContainer ratio={16/9} className="mb-4 relative">
+              <div className="absolute inset-0 flex items-center justify-center cursor-pointer group">
+                <OptimizedImage 
+                  src="https://img.youtube.com/vi/Dz7V8POeG6g/maxresdefault.jpg" 
+                  alt="Apollo 17 Mission Thumbnail" 
+                  className="w-full h-full object-cover rounded transition-all duration-300 group-hover:opacity-80"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-0 h-0 border-y-8 border-y-transparent border-l-12 border-l-white ml-1"></div>
+                  </div>
+                </div>
+              </div>
               <iframe 
                 src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g" 
                 title="Apollo 17 Mission Video"
@@ -48,7 +61,19 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
           
           <div className="glass-card p-6 overflow-hidden">
             <h3 className="text-xl font-bold text-white mb-4">Animals in Space</h3>
-            <AspectRatioContainer ratio={4/3} className="mb-4">
+            <AspectRatioContainer ratio={4/3} className="mb-4 relative">
+              <div className="absolute inset-0 flex items-center justify-center cursor-pointer group">
+                <OptimizedImage 
+                  src="https://img.youtube.com/vi/dwLSbirbrIs/maxresdefault.jpg" 
+                  alt="Animals in Space Thumbnail" 
+                  className="w-full h-full object-cover rounded transition-all duration-300 group-hover:opacity-80"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-0 h-0 border-y-8 border-y-transparent border-l-12 border-l-white ml-1"></div>
+                  </div>
+                </div>
+              </div>
               <iframe 
                 src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs" 
                 title="Animals in Space Video"

@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import OptimizedImage from '@/components/OptimizedImage';
+import WalletButton from '@/components/WalletButton';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,12 +82,13 @@ const Navbar = () => {
               ))}
               <button 
                 onClick={handleBuyPhooey}
-                className="ml-4 btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105 duration-300 flex items-center"
+                className="btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105 duration-300 flex items-center"
                 aria-label="Buy PHOOEY token"
               >
                 <Moon className="h-4 w-4 mr-1" />
                 <span>Buy PHOOEY</span>
               </button>
+              <WalletButton />
             </div>
           </div>
           <div className="md:hidden">
@@ -125,6 +128,9 @@ const Navbar = () => {
               <Moon className="h-4 w-4 mr-1" />
               <span>Buy PHOOEY</span>
             </button>
+            <div className="px-3 pt-2">
+              <WalletButton />
+            </div>
           </div>
         </div>
       )}
