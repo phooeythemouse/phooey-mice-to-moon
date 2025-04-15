@@ -61,7 +61,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/phooey-icon.png" 
+                src="/lovable-uploads/phooey.webp" 
                 alt="PHOOEY" 
                 className="h-10 w-10" 
               />
