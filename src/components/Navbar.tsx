@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Rocket } from 'lucide-react';
@@ -19,7 +18,6 @@ const Navbar = () => {
     { name: 'Fun Zone', path: '/fun' },
   ];
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -54,7 +52,7 @@ const Navbar = () => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-space-blue/20 group-hover:bg-space-blue/30 transform scale-125 group-hover:scale-150 transition-all duration-300"></div>
                 <img 
-                  src="/lovable-uploads/032ecc7d-2031-458f-969b-5aa83db84f2b.png" 
+                  src="/lovable-uploads/52cb1ce2-9ca8-410b-a3b0-1134f2f58a56.png" 
                   alt="PHOOEY" 
                   className="h-10 w-10 relative z-10 animate-float" 
                 />
@@ -95,7 +93,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden glass-card bg-space-dark/95 backdrop-blur-lg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
