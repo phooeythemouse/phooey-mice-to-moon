@@ -15,25 +15,25 @@ const TeamSection: React.FC = () => {
     {
       name: "Carl Johnson",
       role: "Founder & Lead Developer",
-      imageUrl: "/lovable-uploads/c28a7eb5-eca8-476d-8654-185dafffe1e3.png",
+      imageUrl: "/lovable-uploads/carl.jpg",
       bio: "Carl is the visionary behind PHOOEY, combining his passion for blockchain and space exploration to create the first lunar memecoin."
     },
     {
       name: "Laura Chen",
       role: "Creative Director",
-      imageUrl: "/lovable-uploads/010366fd-96f6-4622-a05d-195476d740fd.png",
+      imageUrl: "/lovable-uploads/laura.jpg",
       bio: "Laura leads the creative direction for PHOOEY, bringing the stories of the Apollo 17 mice to life through captivating visuals and narratives."
     },
     {
       name: "Alex Rivera",
       role: "Community Manager",
-      imageUrl: "/lovable-uploads/e10a76fb-88cb-401c-851f-b1370c515606.png",
+      imageUrl: "/lovable-uploads/alex.jpg",
       bio: "Alex builds and nurtures the PHOOEY community, ensuring that every member feels connected to our lunar mission."
     },
     {
       name: "Sara Müller",
       role: "Blockchain Strategist",
-      imageUrl: "/lovable-uploads/f9b8773b-6445-4f05-8863-6d0399d08a8d.png",
+      imageUrl: "/lovable-uploads/sara.jpg",
       bio: "Sara's expertise in blockchain technology helps guide PHOOEY's technical development and tokenomics strategy."
     }
   ];
