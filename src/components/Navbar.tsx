@@ -52,7 +52,7 @@ const Navbar = () => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-space-blue/20 group-hover:bg-space-blue/30 transform scale-125 group-hover:scale-150 transition-all duration-300"></div>
                 <img 
-                  src="/lovable-uploads/52cb1ce2-9ca8-410b-a3b0-1134f2f58a56.png" 
+                  src="/lovable-uploads/icon.png" 
                   alt="PHOOEY" 
                   className="h-10 w-10 relative z-10 animate-float" 
                 />
