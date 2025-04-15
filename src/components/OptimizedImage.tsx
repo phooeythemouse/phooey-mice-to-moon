@@ -41,6 +41,19 @@ const OptimizedImage = ({
   const handleError = () => {
     setHasError(true);
     console.error(`Failed to load image: ${src}`);
+    
+    // For YouTube thumbnails, try an alternative URL if the original fails
+    if (src.includes('youtube') && src.includes('vi')) {
+      // Try another thumbnail format
+      const videoId = src.split('/').pop()?.split('?')[0];
+      if (videoId) {
+        const alternativeSrc = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+        console.log('Trying alternative YouTube thumbnail:', alternativeSrc);
+        setImageSrc(alternativeSrc);
+        return;
+      }
+    }
+    
     setImageSrc('/placeholder.svg');
   };
 

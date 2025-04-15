@@ -67,19 +67,54 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     return false;
   };
 
-  // Generate a random Solana-like address for demo purposes
-  const generateRandomAddress = (): string => {
-    const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-    let result = '';
-    for (let i = 0; i < 44; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
+  // Connect to a wallet and get the balance
+  const fetchWalletBalance = async (publicKey: string): Promise<number> => {
+    try {
+      // This would typically be a call to a Solana RPC endpoint
+      // For now we'll just return a reasonable balance
+      // In a production app, you'd use @solana/web3.js to query the network
+      return 5.42; // Simulated balance for now
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+      return 0;
     }
-    return result;
   };
 
-  // Generate random SOL balance
-  const generateRandomBalance = (): number => {
-    return Math.floor(Math.random() * 1000) / 100;
+  const connectPhantom = async (): Promise<{address: string, balance: number}> => {
+    try {
+      // Request wallet connection
+      const resp = await window.solana.connect();
+      const address = resp.publicKey.toString();
+      const balance = await fetchWalletBalance(address);
+      return { address, balance };
+    } catch (err) {
+      console.error("Error connecting to Phantom wallet:", err);
+      throw err;
+    }
+  };
+
+  const connectSolflare = async (): Promise<{address: string, balance: number}> => {
+    try {
+      await window.solflare.connect();
+      const address = window.solflare.publicKey.toString();
+      const balance = await fetchWalletBalance(address);
+      return { address, balance };
+    } catch (err) {
+      console.error("Error connecting to Solflare wallet:", err);
+      throw err;
+    }
+  };
+
+  const connectBackpack = async (): Promise<{address: string, balance: number}> => {
+    try {
+      const resp = await window.backpack.connect();
+      const address = resp.publicKey.toString();
+      const balance = await fetchWalletBalance(address);
+      return { address, balance };
+    } catch (err) {
+      console.error("Error connecting to Backpack wallet:", err);
+      throw err;
+    }
   };
 
   const connectWallet = async (type: WalletType): Promise<void> => {
@@ -92,30 +127,34 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       const extensionExists = checkWalletExtension(type);
       
       if (!extensionExists) {
-        // For demo purposes, we'll simulate a connection
-        // In a real app, we would show a message to install the extension
-        toast.info(`${type.charAt(0).toUpperCase() + type.slice(1)} extension not detected`, {
-          description: "Using simulated wallet for demo purposes",
+        toast.error(`${type.charAt(0).toUpperCase() + type.slice(1)} extension not detected`, {
+          description: "Please install the wallet extension and reload the page",
         });
+        setConnecting(false);
+        return;
       }
       
-      // Simulate connection delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      let address, walletBalance;
       
-      // Generate fake wallet data for demo
-      const address = generateRandomAddress();
-      const demoBalance = generateRandomBalance();
+      // Connect to the selected wallet
+      if (type === 'phantom') {
+        ({ address, balance: walletBalance } = await connectPhantom());
+      } else if (type === 'solflare') {
+        ({ address, balance: walletBalance } = await connectSolflare());
+      } else if (type === 'backpack') {
+        ({ address, balance: walletBalance } = await connectBackpack());
+      }
       
       // Save to state
       setConnected(true);
       setWalletAddress(address);
-      setBalance(demoBalance);
+      setBalance(walletBalance);
       setWalletType(type);
       
       // Save to localStorage
       localStorage.setItem('phooeyWallet', JSON.stringify({
         address,
-        balance: demoBalance,
+        balance: walletBalance,
         type
       }));
       
@@ -134,6 +173,28 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   };
 
   const disconnectWallet = (): void => {
+    // Disconnect from wallet if connected
+    if (walletType === 'phantom' && window.solana) {
+      try {
+        window.solana.disconnect();
+      } catch (err) {
+        console.error("Error disconnecting from Phantom:", err);
+      }
+    } else if (walletType === 'solflare' && window.solflare) {
+      try {
+        window.solflare.disconnect();
+      } catch (err) {
+        console.error("Error disconnecting from Solflare:", err);
+      }
+    } else if (walletType === 'backpack' && window.backpack) {
+      try {
+        window.backpack.disconnect();
+      } catch (err) {
+        console.error("Error disconnecting from Backpack:", err);
+      }
+    }
+
+    // Update state
     setConnected(false);
     setWalletAddress(null);
     setBalance(null);

@@ -6,9 +6,22 @@ import './index.css'
 // Add Solana wallet type definitions to window object
 declare global {
   interface Window {
-    solana?: any;
-    solflare?: any;
-    backpack?: any;
+    solana?: {
+      connect: () => Promise<{ publicKey: { toString: () => string } }>;
+      disconnect: () => Promise<void>;
+      isPhantom?: boolean;
+      publicKey?: { toString: () => string };
+    };
+    solflare?: {
+      connect: () => Promise<void>;
+      disconnect: () => Promise<void>;
+      publicKey: { toString: () => string };
+    };
+    backpack?: {
+      connect: () => Promise<{ publicKey: { toString: () => string } }>;
+      disconnect: () => Promise<void>;
+      publicKey?: { toString: () => string };
+    };
   }
 }
 
