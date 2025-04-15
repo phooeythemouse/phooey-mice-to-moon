@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Share2, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -8,6 +7,8 @@ import Footer from '@/components/Footer';
 import StarryBackground from '@/components/StarryBackground';
 import SectionHeading from '@/components/SectionHeading';
 import SocialIcon from '@/components/SocialIcon';
+import ProjectRoadmap from '@/components/ProjectRoadmap';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const CommunityPage = () => {
   const socialPlatforms = [
@@ -157,6 +158,9 @@ const CommunityPage = () => {
         </div>
       </section>
       
+      {/* Project Roadmap Section */}
+      <ProjectRoadmap />
+      
       {/* Community Ambassadors Section */}
       <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -176,10 +180,12 @@ const CommunityPage = () => {
               {ambassadors.map((ambassador, index) => (
                 <div key={index} className="text-center">
                   <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-space-blue">
-                    <img 
+                    <OptimizedImage 
                       src={ambassador.imageUrl} 
                       alt={ambassador.name} 
                       className="w-full h-full object-cover"
+                      width={96}
+                      height={96}
                     />
                   </div>
                   <h4 className="text-lg font-bold text-white mb-1">{ambassador.name}</h4>

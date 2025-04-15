@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Rocket } from 'lucide-react';
@@ -52,9 +53,10 @@ const Navbar = () => {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-space-blue/20 group-hover:bg-space-blue/30 transform scale-125 group-hover:scale-150 transition-all duration-300"></div>
                 <img 
-                  src="/lovable-uploads/icon.png" 
+                  src="/lovable-uploads/phooey.webp" 
                   alt="PHOOEY" 
                   className="h-10 w-10 relative z-10 animate-float" 
+                  loading="eager"
                 />
               </div>
               <span className="text-2xl font-bold text-gradient group-hover:scale-105 transition-transform duration-300">PHOOEY</span>
@@ -79,6 +81,7 @@ const Navbar = () => {
               <button 
                 onClick={handleBuyPhooey}
                 className="ml-4 btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105 duration-300 flex items-center"
+                aria-label="Buy PHOOEY token"
               >
                 <Moon className="h-4 w-4 mr-1" />
                 <span>Buy PHOOEY</span>
@@ -86,7 +89,11 @@ const Navbar = () => {
             </div>
           </div>
           <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-white hover:text-space-accent transition-colors">
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="text-white hover:text-space-accent transition-colors"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
