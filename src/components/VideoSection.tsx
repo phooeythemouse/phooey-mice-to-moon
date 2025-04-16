@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ExternalLink, Youtube } from 'lucide-react';
 import AspectRatioContainer from './AspectRatioContainer';
 import OptimizedImage from './OptimizedImage';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface VideoSectionProps {
   className?: string;
@@ -11,6 +12,7 @@ interface VideoSectionProps {
 const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
   const [isApollo17Playing, setIsApollo17Playing] = useState(false);
   const [isAnimalsPlaying, setIsAnimalsPlaying] = useState(false);
+  const isMobile = useIsMobile();
 
   const playApollo17Video = () => {
     setIsApollo17Playing(true);
@@ -54,12 +56,11 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
                 </div>
               ) : (
                 <iframe 
-                  src="https://www.youtube.com/embed/Dz7V8POeG6g?autoplay=1&controls=1&rel=0" 
+                  src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g?autoplay=1&controls=1&rel=0" 
                   title="Apollo 17 Mission Video"
                   className="w-full h-full rounded"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen
-                  loading="lazy"
                 ></iframe>
               )}
             </AspectRatioContainer>
@@ -99,12 +100,11 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
                 </div>
               ) : (
                 <iframe 
-                  src="https://www.youtube.com/embed/dwLSbirbrIs?autoplay=1&controls=1&rel=0" 
+                  src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs?autoplay=1&controls=1&rel=0" 
                   title="Animals in Space Video"
                   className="w-full h-full rounded"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen
-                  loading="lazy"
                 ></iframe>
               )}
             </AspectRatioContainer>
