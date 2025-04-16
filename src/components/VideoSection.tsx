@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Youtube } from 'lucide-react';
 import AspectRatioContainer from './AspectRatioContainer';
 import OptimizedImage from './OptimizedImage';
 
@@ -20,10 +20,11 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
           <div className="space-divider mt-6 max-w-xs mx-auto"></div>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="glass-card p-6 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Apollo 17 Mission - TikTok style short */}
+          <div className="glass-card p-6 overflow-hidden lg:col-span-5">
             <h3 className="text-xl font-bold text-white mb-4">Apollo 17 Mission</h3>
-            <AspectRatioContainer ratio={16/9} className="mb-4 relative">
+            <AspectRatioContainer ratio={9/16} className="mb-4 relative max-w-sm mx-auto">
               <div className="absolute inset-0 flex items-center justify-center cursor-pointer group">
                 <OptimizedImage 
                   src="https://img.youtube.com/vi/Dz7V8POeG6g/maxresdefault.jpg" 
@@ -37,7 +38,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
                 </div>
               </div>
               <iframe 
-                src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g" 
+                src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g?controls=1&rel=0" 
                 title="Apollo 17 Mission Video"
                 className="w-full h-full rounded"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -59,12 +60,13 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
             </a>
           </div>
           
-          <div className="glass-card p-6 overflow-hidden">
+          {/* Animals in Space - Full YouTube size */}
+          <div className="glass-card p-6 overflow-hidden lg:col-span-7">
             <h3 className="text-xl font-bold text-white mb-4">Animals in Space</h3>
-            <AspectRatioContainer ratio={4/3} className="mb-4 relative">
+            <AspectRatioContainer ratio={16/9} className="mb-4 relative">
               <div className="absolute inset-0 flex items-center justify-center cursor-pointer group">
                 <OptimizedImage 
-                  src="https://img.youtube.com/vi/dwLSbirbrIs/maxresdefault.jpg" 
+                  src="https://img.youtube.com/vi/dwLSbirbrIs/hqdefault.jpg" 
                   alt="Animals in Space Thumbnail" 
                   className="w-full h-full object-cover rounded transition-all duration-300 group-hover:opacity-80"
                 />
@@ -75,7 +77,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
                 </div>
               </div>
               <iframe 
-                src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs" 
+                src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs?controls=1&rel=0" 
                 title="Animals in Space Video"
                 className="w-full h-full rounded"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

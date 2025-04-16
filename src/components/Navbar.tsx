@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Rocket } from 'lucide-react';
+import { Menu, X, Moon, Rocket, Twitter, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import OptimizedImage from '@/components/OptimizedImage';
 import WalletButton from '@/components/WalletButton';
+import SocialIcon from '@/components/SocialIcon';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +49,33 @@ const Navbar = () => {
         ? "glass-card bg-space-dark/80 backdrop-blur-lg shadow-lg" 
         : "bg-transparent"
     )}>
+      {/* Social Media Bar */}
+      <div className="bg-space-dark/90 py-1 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-end items-center">
+            <a 
+              href="https://twitter.com/phooeythemouse" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 text-gray-300 hover:text-space-accent transition-colors"
+              aria-label="Twitter"
+            >
+              <SocialIcon type="twitter" size={16} className="hover:scale-110 transition-transform" />
+            </a>
+            <a 
+              href="https://t.me/phooeythemouse" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 text-gray-300 hover:text-space-accent transition-colors"
+              aria-label="Telegram"
+            >
+              <SocialIcon type="telegram" size={16} className="hover:scale-110 transition-transform" />
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      {/* Main Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">

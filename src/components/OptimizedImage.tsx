@@ -42,11 +42,14 @@ const OptimizedImage = ({
     setHasError(true);
     console.error(`Failed to load image: ${src}`);
     
-    // For YouTube thumbnails, try an alternative URL if the original fails
-    if (src.includes('youtube') && src.includes('vi')) {
-      // Try another thumbnail format
-      const videoId = src.split('/').pop()?.split('?')[0];
+    // For YouTube thumbnails, try alternative URL formats
+    if (src.includes('youtube') && (src.includes('maxresdefault') || src.includes('vi'))) {
+      const videoId = src.includes('vi') 
+        ? src.split('/').pop()?.split('?')[0]
+        : src.match(/\/([a-zA-Z0-9_-]{11})\//)?.[1];
+        
       if (videoId) {
+        // Try alternative YouTube thumbnail formats in order of quality
         const alternativeSrc = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
         console.log('Trying alternative YouTube thumbnail:', alternativeSrc);
         setImageSrc(alternativeSrc);
