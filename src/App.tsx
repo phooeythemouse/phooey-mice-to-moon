@@ -69,7 +69,7 @@ const App = () => (
           <meta name="robots" content="index, follow" />
           
           {/* Performance and security */}
-          <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; script-src 'self' https://cdn.gpteng.co https://cdn.wowanalytics.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.phooey.fun;" />
+          <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https: *.youtube.com *.ytimg.com; script-src 'self' https://cdn.gpteng.co https://cdn.wowanalytics.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.phooey.fun; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com;" />
           <meta name="theme-color" content="#0F172A" />
         </Helmet>
         <Toaster />

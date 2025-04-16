@@ -34,10 +34,10 @@ const base = document.createElement('base');
 base.href = '/';
 head.appendChild(base);
 
-// Update CSP for YouTube iframe embedding
+// Update CSP to allow YouTube iframe embedding
 const meta = document.createElement('meta');
 meta.httpEquiv = 'Content-Security-Policy';
-meta.content = "default-src 'self'; img-src 'self' data: https:; script-src 'self' https://cdn.gpteng.co https://cdn.wowanalytics.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.phooey.fun; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com";
+meta.content = "default-src 'self'; img-src 'self' data: https: *.youtube.com *.ytimg.com; script-src 'self' https://cdn.gpteng.co https://cdn.wowanalytics.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.phooey.fun; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com";
 head.appendChild(meta);
 
 // React 18's createRoot API

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ExternalLink, Youtube } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import AspectRatioContainer from './AspectRatioContainer';
 import OptimizedImage from './OptimizedImage';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -56,7 +56,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
                 </div>
               ) : (
                 <iframe 
-                  src="https://www.youtube-nocookie.com/embed/Dz7V8POeG6g?autoplay=1&controls=1&rel=0" 
+                  src="https://www.youtube.com/embed/Dz7V8POeG6g?autoplay=1&controls=1&rel=0" 
                   title="Apollo 17 Mission Video"
                   className="w-full h-full rounded"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -100,7 +100,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ className = '' }) => {
                 </div>
               ) : (
                 <iframe 
-                  src="https://www.youtube-nocookie.com/embed/dwLSbirbrIs?autoplay=1&controls=1&rel=0" 
+                  src="https://www.youtube.com/embed/dwLSbirbrIs?autoplay=1&controls=1&rel=0" 
                   title="Animals in Space Video"
                   className="w-full h-full rounded"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
