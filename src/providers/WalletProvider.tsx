@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define wallet types
 export type WalletType = 'phantom' | 'solflare' | 'backpack' | null;
@@ -37,6 +38,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [walletType, setWalletType] = useState<WalletType>(null);
+  const isMobile = useIsMobile();
 
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -54,6 +56,84 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       }
     }
   }, []);
+
+  // Check for wallet connection on mobile (for when user returns from wallet app)
+  useEffect(() => {
+    if (isMobile && !connected) {
+      const checkWalletConnection = async () => {
+        // Check for each wallet type
+        if (window.solana?.isPhantom && window.solana?.publicKey) {
+          const address = window.solana.publicKey.toString();
+          const balance = await fetchWalletBalance(address);
+          
+          // Auto-connect since we detected the wallet is connected
+          setConnected(true);
+          setWalletAddress(address);
+          setBalance(balance);
+          setWalletType('phantom');
+          
+          // Save to localStorage
+          localStorage.setItem('phooeyWallet', JSON.stringify({
+            address,
+            balance,
+            type: 'phantom'
+          }));
+          
+          toast.success('Wallet connected automatically!');
+        } 
+        else if (window.solflare?.publicKey) {
+          const address = window.solflare.publicKey.toString();
+          const balance = await fetchWalletBalance(address);
+          
+          setConnected(true);
+          setWalletAddress(address);
+          setBalance(balance);
+          setWalletType('solflare');
+          
+          localStorage.setItem('phooeyWallet', JSON.stringify({
+            address,
+            balance,
+            type: 'solflare'
+          }));
+          
+          toast.success('Wallet connected automatically!');
+        }
+        else if (window.backpack?.publicKey) {
+          const address = window.backpack.publicKey.toString();
+          const balance = await fetchWalletBalance(address);
+          
+          setConnected(true);
+          setWalletAddress(address);
+          setBalance(balance);
+          setWalletType('backpack');
+          
+          localStorage.setItem('phooeyWallet', JSON.stringify({
+            address,
+            balance,
+            type: 'backpack'
+          }));
+          
+          toast.success('Wallet connected automatically!');
+        }
+      };
+      
+      // Check for wallet connection
+      checkWalletConnection();
+      
+      // Also add an event listener for visibility changes to handle when user returns from wallet app
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+          checkWalletConnection();
+        }
+      };
+      
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
+    }
+  }, [isMobile, connected]);
 
   // Check if wallet extension exists
   const checkWalletExtension = (type: WalletType): boolean => {
@@ -126,7 +206,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       // Check if wallet extension exists
       const extensionExists = checkWalletExtension(type);
       
-      if (!extensionExists) {
+      if (!extensionExists && !isMobile) {
         toast.error(`${type.charAt(0).toUpperCase() + type.slice(1)} extension not detected`, {
           description: "Please install the wallet extension and reload the page",
         });

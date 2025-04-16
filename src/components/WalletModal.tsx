@@ -19,7 +19,8 @@ const walletOptions = [
     description: 'Popular Solana wallet with a user-friendly interface',
     installUrl: 'https://phantom.app/',
     deepLink: 'https://phantom.app/ul/browse/',
-    universalLink: true
+    universalLink: true,
+    mobileAppDeepLink: 'phantom://',
   },
   { 
     name: 'Solflare', 
@@ -28,7 +29,8 @@ const walletOptions = [
     description: 'Secure and feature-rich Solana wallet',
     installUrl: 'https://solflare.com/',
     deepLink: 'https://solflare.com/ul/v1/browse/',
-    universalLink: true
+    universalLink: true,
+    mobileAppDeepLink: 'solflare://',
   },
   { 
     name: 'Backpack', 
@@ -37,7 +39,8 @@ const walletOptions = [
     description: 'Multi-chain wallet with xNFT support',
     installUrl: 'https://www.backpack.app/',
     deepLink: 'https://backpack.app/browse',
-    universalLink: false
+    universalLink: false,
+    mobileAppDeepLink: 'backpack://',
   }
 ];
 
@@ -64,14 +67,42 @@ const WalletModal: React.FC<WalletModalProps> = ({ open, onOpenChange }) => {
 
   // For mobile deep links
   const openMobileWallet = (wallet: typeof walletOptions[0]) => {
-    const currentUrl = encodeURIComponent(window.location.href);
-    let deepLink = wallet.deepLink;
+    // First try direct app scheme 
+    const tryDeepLink = () => {
+      try {
+        window.location.href = wallet.mobileAppDeepLink;
+        console.log(`Opening wallet via direct scheme: ${wallet.mobileAppDeepLink}`);
+      } catch (e) {
+        console.error('Failed to open direct app scheme:', e);
+        openUniversalLink(wallet);
+      }
+    };
     
-    if (wallet.universalLink) {
-      window.location.href = `${deepLink}${currentUrl}`;
-    } else {
-      window.location.href = deepLink;
-    }
+    // As fallback, use universal links 
+    const openUniversalLink = (wallet: typeof walletOptions[0]) => {
+      try {
+        const currentUrl = encodeURIComponent(window.location.href);
+        let deepLink = wallet.deepLink;
+        
+        if (wallet.universalLink) {
+          window.location.href = `${deepLink}${currentUrl}`;
+          console.log(`Opening wallet via universal link: ${deepLink}${currentUrl}`);
+        } else {
+          window.location.href = deepLink;
+          console.log(`Opening wallet via regular link: ${deepLink}`);
+        }
+      } catch (e) {
+        console.error('Failed to open universal link:', e);
+      }
+    };
+    
+    // Try direct deep link first
+    tryDeepLink();
+    
+    // After 1 second, if app didn't open, try universal link as fallback 
+    setTimeout(() => {
+      openUniversalLink(wallet);
+    }, 1000);
   };
 
   return (
@@ -140,6 +171,12 @@ const WalletModal: React.FC<WalletModalProps> = ({ open, onOpenChange }) => {
                     </a>
                   )}
                 </div>
+                
+                {isMobile && (
+                  <div className="mt-2 text-xs text-amber-400">
+                    Tap "Open App" to launch and connect with {wallet.name}
+                  </div>
+                )}
                 
                 {!isMobile && !extensionExists && (
                   <div className="mt-2 text-xs text-amber-400">
