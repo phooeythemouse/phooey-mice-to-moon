@@ -50,27 +50,32 @@ const Navbar = () => {
         : "bg-transparent"
     )}>
       {/* Social Media Bar */}
-      <div className="bg-space-dark/90 py-1 border-b border-white/10">
+      <div className="bg-space-dark/90 py-2 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-end items-center">
-            <a 
-              href="https://twitter.com/phooeythemouse" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 text-gray-300 hover:text-space-accent transition-colors"
-              aria-label="Twitter"
-            >
-              <SocialIcon type="twitter" size={16} className="hover:scale-110 transition-transform" />
-            </a>
-            <a 
-              href="https://t.me/phooeythemouse" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 text-gray-300 hover:text-space-accent transition-colors"
-              aria-label="Telegram"
-            >
-              <SocialIcon type="telegram" size={16} className="hover:scale-110 transition-transform" />
-            </a>
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-white/70">Follow us:</div>
+            <div className="flex items-center gap-3">
+              <a 
+                href="https://twitter.com/phooeythemouse" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-space-blue/20 text-gray-200 hover:text-space-accent transition-colors"
+                aria-label="Twitter"
+              >
+                <SocialIcon type="twitter" size={20} className="hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Twitter</span>
+              </a>
+              <a 
+                href="https://t.me/phooeythemouse" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-space-blue/20 text-gray-200 hover:text-space-accent transition-colors"
+                aria-label="Telegram"
+              >
+                <SocialIcon type="telegram" size={20} className="hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Telegram</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -149,6 +154,30 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+            <div className="px-3 py-3 flex space-x-3">
+              <a 
+                href="https://twitter.com/phooeythemouse" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-space-blue/20 text-gray-200 hover:text-space-accent transition-colors"
+                aria-label="Twitter"
+                onClick={() => setIsOpen(false)}
+              >
+                <SocialIcon type="twitter" size={20} />
+                <span>Twitter</span>
+              </a>
+              <a 
+                href="https://t.me/phooeythemouse" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-space-blue/20 text-gray-200 hover:text-space-accent transition-colors"
+                aria-label="Telegram"
+                onClick={() => setIsOpen(false)}
+              >
+                <SocialIcon type="telegram" size={20} />
+                <span>Telegram</span>
+              </a>
+            </div>
             <button 
               onClick={handleBuyPhooey}
               className="btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-2 px-6 rounded-full mt-4 transition-all self-start mx-3 flex items-center"
