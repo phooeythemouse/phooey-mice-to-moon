@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import WalletButton from './WalletButton';
 import SocialIcon from './SocialIcon';
 import OptimizedImage from './OptimizedImage';
@@ -10,7 +10,7 @@ import OptimizedImage from './OptimizedImage';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const location = useLocation();
   
   const isActive = (path: string) => {
@@ -66,13 +66,12 @@ const Navbar = () => {
           <div className="flex items-center">
             {/* Social icons - Desktop only */}
             <div className="hidden md:flex items-center space-x-3 mr-6">
-              <SocialIcon type="twitter" size="sm" showOnMobile={false} />
-              <SocialIcon type="discord" size="sm" showOnMobile={false} />
-              <SocialIcon type="telegram" size="sm" showOnMobile={false} />
+              <SocialIcon type="twitter" />
+              <SocialIcon type="telegram" />
             </div>
             
             {/* Wallet Button */}
-            <WalletButton className="btn-primary btn-sm" />
+            <WalletButton />
             
             {/* Mobile menu button */}
             <button 
@@ -99,9 +98,8 @@ const Navbar = () => {
             
             {/* Social icons in mobile menu */}
             <div className="flex items-center space-x-4 pt-2 border-t border-white/10">
-              <SocialIcon type="twitter" size="sm" />
-              <SocialIcon type="discord" size="sm" />
-              <SocialIcon type="telegram" size="sm" />
+              <SocialIcon type="twitter" />
+              <SocialIcon type="telegram" />
             </div>
           </div>
         </div>

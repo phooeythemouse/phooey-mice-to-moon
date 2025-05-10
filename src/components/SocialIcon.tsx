@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Twitter, MessageCircle } from 'lucide-react';
+import { Twitter, MessageCircle, Disc } from 'lucide-react';
 
 type SocialIconProps = {
-  type: 'twitter' | 'telegram';
+  type: 'twitter' | 'telegram' | 'discord';
   size?: number;
   className?: string;
 };
@@ -23,6 +23,10 @@ const SocialIcon: React.FC<SocialIconProps> = ({ type, size = 24, className = ''
             <path d="m14.5 12.5 7-8" />
             <path d="M6.5 20v-6.5l8-1" />
           </svg>
+        );
+      case 'discord':
+        return (
+          <Disc width={size} height={size} className={className} />
         );
       default:
         return null;
