@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Maximize, Minimize, Gamepad2 } from 'lucide-react';
 
 interface GameObject {
   x: number;
@@ -13,16 +14,17 @@ interface GameObject {
 
 interface PhooeyGameProps {
   onGameEnd: (score: number) => void;
+  isFullscreen?: boolean;
+  onFullscreenToggle?: (enterFullscreen: boolean) => void;
 }
 
-const GAME_WIDTH = 360;
-const GAME_HEIGHT = 640;
-const GRAVITY = 0.2;
-const BOOST_POWER = -5;
-const CHEESE_POINTS = 10;
-
-const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
+const PhooeyGame: React.FC<PhooeyGameProps> = ({ 
+  onGameEnd, 
+  isFullscreen = false,
+  onFullscreenToggle 
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const gameContainerRef = useRef<HTMLDivElement>(null);
   const [score, setScore] = useState(0);
   const [gameLoop, setGameLoop] = useState<number | null>(null);
   const [gameObjects, setGameObjects] = useState<GameObject[]>([]);
@@ -30,6 +32,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
   const [gameStartTime, setGameStartTime] = useState(0);
   const [gameTime, setGameTime] = useState(0);
   const [boostMode, setBoostMode] = useState(false);
+  const [canvasSize, setCanvasSize] = useState({ width: 360, height: 640 });
   const isMobile = useIsMobile();
   
   // Asset references
@@ -49,6 +52,104 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
   const cheeseCollectSoundRef = useRef<HTMLAudioElement | null>(null);
   const crashSoundRef = useRef<HTMLAudioElement | null>(null);
   const bgMusicRef = useRef<HTMLAudioElement | null>(null);
+
+  // Fullscreen handling
+  const enterFullscreen = useCallback(() => {
+    if (!gameContainerRef.current) return;
+    
+    if (gameContainerRef.current.requestFullscreen) {
+      gameContainerRef.current.requestFullscreen()
+        .then(() => {
+          if (onFullscreenToggle) onFullscreenToggle(true);
+          // Resize canvas to fit screen
+          handleResize();
+        })
+        .catch(err => {
+          console.error('Error attempting to enable fullscreen:', err);
+        });
+    }
+  }, [onFullscreenToggle]);
+  
+  const exitFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen()
+        .then(() => {
+          if (onFullscreenToggle) onFullscreenToggle(false);
+          // Reset canvas size
+          setCanvasSize({ width: 360, height: 640 });
+        })
+        .catch(err => {
+          console.error('Error attempting to exit fullscreen:', err);
+        });
+    }
+  }, [onFullscreenToggle]);
+  
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  }, [enterFullscreen, exitFullscreen]);
+  
+  // Handle fullscreen change event
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isFullscreenActive = !!document.fullscreenElement;
+      if (onFullscreenToggle) onFullscreenToggle(isFullscreenActive);
+      if (!isFullscreenActive) {
+        // Reset canvas size when exiting fullscreen
+        setCanvasSize({ width: 360, height: 640 });
+      }
+    };
+    
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [onFullscreenToggle]);
+  
+  // Handle screen resize
+  const handleResize = useCallback(() => {
+    if (!isFullscreen || !canvasRef.current) return;
+    
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    // Keep aspect ratio similar to original game (16:9)
+    let newWidth, newHeight;
+    
+    if (screenWidth / screenHeight > 9/16) {
+      // Screen is wider than our target ratio
+      newHeight = screenHeight;
+      newWidth = newHeight * (9/16);
+    } else {
+      // Screen is taller than our target ratio
+      newWidth = screenWidth;
+      newHeight = newWidth * (16/9);
+    }
+    
+    setCanvasSize({
+      width: Math.floor(newWidth),
+      height: Math.floor(newHeight)
+    });
+  }, [isFullscreen]);
+  
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [handleResize]);
+  
+  // Auto-resize for fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      handleResize();
+    } else {
+      setCanvasSize({ width: 360, height: 640 });
+    }
+  }, [isFullscreen, handleResize]);
 
   // Load game assets
   useEffect(() => {
@@ -78,8 +179,8 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
 
         // Create player object
         const playerObject: GameObject = {
-          x: GAME_WIDTH / 2 - 25,
-          y: GAME_HEIGHT - 100,
+          x: canvasSize.width / 2 - 25,
+          y: canvasSize.height - 100,
           width: 50,
           height: 50,
           speed: 0,
@@ -157,7 +258,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
     if (rand < 0.6) {
       // Spawn cheese (60% chance)
       newObject = {
-        x: Math.random() * (GAME_WIDTH - 30),
+        x: Math.random() * (canvasSize.width - 30),
         y: -50,
         width: 30,
         height: 30,
@@ -171,7 +272,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
       const obstacleImage = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)]!;
       
       newObject = {
-        x: Math.random() * (GAME_WIDTH - 40),
+        x: Math.random() * (canvasSize.width - 40),
         y: -50,
         width: 40,
         height: 40,
@@ -198,7 +299,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
         // Handle collision based on object type
         if (obj.type === 'cheese') {
           // Collect cheese
-          setScore(prev => prev + CHEESE_POINTS);
+          setScore(prev => prev + 10);
           if (cheeseCollectSoundRef.current) {
             cheeseCollectSoundRef.current.currentTime = 0;
             cheeseCollectSoundRef.current.play().catch(e => console.log(e));
@@ -230,18 +331,18 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
     if (!ctx) return;
     
     // Clear canvas
-    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
     
     // Draw background (starry background)
     ctx.fillStyle = '#0F172A';
-    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    ctx.fillRect(0, 0, canvasSize.width, canvasSize.height);
     
     // Add some stars
     for (let i = 0; i < 100; i++) {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       ctx.fillRect(
-        Math.sin(i * 100 + gameTime / 1000) * GAME_WIDTH + GAME_WIDTH/2, 
-        Math.cos(i * 100 + gameTime / 1000) * GAME_HEIGHT/2 + GAME_HEIGHT/2, 
+        Math.sin(i * 100 + gameTime / 1000) * canvasSize.width + canvasSize.width/2, 
+        Math.cos(i * 100 + gameTime / 1000) * canvasSize.height/2 + canvasSize.height/2, 
         1, 
         1
       );
@@ -252,8 +353,8 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
       ctx.globalAlpha = 0.1;
       ctx.drawImage(
         solanaImageRef.current,
-        GAME_WIDTH/2 - 100,
-        GAME_HEIGHT/2 - 100,
+        canvasSize.width/2 - 100,
+        canvasSize.height/2 - 100,
         200,
         200
       );
@@ -277,7 +378,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
       const player = updatedObjects[playerIndex];
       
       // Apply gravity
-      setPlayerVelocity(prev => prev + GRAVITY);
+      setPlayerVelocity(prev => prev + 0.2);
       
       // Update player position
       player.y += playerVelocity;
@@ -287,8 +388,8 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
         player.y = 0;
         setPlayerVelocity(1);
       }
-      if (player.y > GAME_HEIGHT - player.height) {
-        player.y = GAME_HEIGHT - player.height;
+      if (player.y > canvasSize.height - player.height) {
+        player.y = canvasSize.height - player.height;
         setPlayerVelocity(0);
       }
       
@@ -311,7 +412,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
       obj.y += obj.speed;
       
       // Remove objects that go off screen
-      if (obj.y > GAME_HEIGHT) {
+      if (obj.y > canvasSize.height) {
         updatedObjects.splice(i, 1);
         i--;
       }
@@ -340,7 +441,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
       if (marsImageRef.current) {
         ctx.drawImage(
           marsImageRef.current,
-          GAME_WIDTH/2 - 100,
+          canvasSize.width/2 - 100,
           -50,
           200,
           200
@@ -361,7 +462,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
 
   const handleBoost = () => {
     setBoostMode(true);
-    setPlayerVelocity(BOOST_POWER);
+    setPlayerVelocity(-5);
     
     if (boostSoundRef.current) {
       boostSoundRef.current.currentTime = 0;
@@ -385,6 +486,13 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
       bgMusicRef.current.currentTime = 0;
     }
     
+    // Exit fullscreen if game ended
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(err => {
+        console.log('Error exiting fullscreen:', err);
+      });
+    }
+    
     // Add bonus for successful landing
     const finalScore = success ? score + 100 : score;
     
@@ -400,30 +508,70 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({ onGameEnd }) => {
 
   return (
     <div 
-      className="game-container relative w-full max-w-sm mx-auto"
+      ref={gameContainerRef}
+      className={`game-container relative ${isFullscreen ? 'fullscreen-game-container' : 'w-full max-w-sm mx-auto'}`}
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
       <canvas
         ref={canvasRef}
-        width={GAME_WIDTH}
-        height={GAME_HEIGHT}
-        className="bg-space-dark border-2 border-space-blue rounded-lg mx-auto"
+        width={canvasSize.width}
+        height={canvasSize.height}
+        className={`
+          bg-space-dark border-2 border-space-blue rounded-lg mx-auto
+          ${isFullscreen ? 'fullscreen-canvas' : ''}
+        `}
         onClick={handleBoost}
         onTouchStart={handleBoost}
       />
-      {isMobile && (
-        <div className="mt-4 text-center text-gray-300 text-sm">
-          Tap screen to boost PHOOEY's jetpack! 🚀
-        </div>
-      )}
-      <div className="game-controls mt-4 flex justify-center">
-        <button
-          className="btn-outline px-4 py-2 text-white rounded-lg border border-space-accent"
-          onClick={handleBoost}
-        >
-          Boost! 🚀
-        </button>
+      
+      {/* Fullscreen toggle button */}
+      <button
+        onClick={toggleFullscreen}
+        className="absolute top-2 right-2 z-10 p-2 bg-space-dark/70 rounded-full hover:bg-space-dark transition-all"
+        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+      >
+        {isFullscreen ? (
+          <Minimize className="text-white w-6 h-6" />
+        ) : (
+          <Maximize className="text-white w-6 h-6" />
+        )}
+      </button>
+      
+      {/* Game controls */}
+      <div className={`game-controls mt-4 flex justify-center ${isFullscreen ? 'fullscreen-controls' : ''}`}>
+        {!isFullscreen && isMobile && (
+          <div className="text-center text-gray-300 text-sm mb-2 w-full">
+            Tap screen to boost PHOOEY's jetpack! 🚀
+          </div>
+        )}
+        
+        {!isFullscreen && (
+          <div className="flex gap-2">
+            <button
+              className="btn-outline px-4 py-2 text-white rounded-lg border border-space-accent flex items-center gap-1"
+              onClick={handleBoost}
+            >
+              <Gamepad2 className="w-4 h-4" />
+              Boost!
+            </button>
+            <button
+              className="btn-outline px-4 py-2 text-white rounded-lg border border-space-accent flex items-center gap-1"
+              onClick={enterFullscreen}
+            >
+              <Maximize className="w-4 h-4" />
+              Fullscreen
+            </button>
+          </div>
+        )}
+        
+        {isFullscreen && (
+          <div className="fullscreen-boost-indicator absolute bottom-10 left-1/2 transform -translate-x-1/2">
+            <div className="text-white text-lg bg-black/50 px-4 py-2 rounded-full animate-pulse">
+              Tap anywhere to boost! 🚀
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

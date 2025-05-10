@@ -5,12 +5,14 @@ import Footer from '@/components/Footer';
 import PhooeyGame from '@/components/PhooeyGame';
 import GameLeaderboard from '@/components/GameLeaderboard';
 import { toast } from 'sonner';
+import { ArrowUpRight } from 'lucide-react';
 
 const Game = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
   const [telegramUsername, setTelegramUsername] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   const handleStartGame = () => {
     setGameStarted(true);
@@ -22,6 +24,7 @@ const Game = () => {
     setGameEnded(true);
     setGameStarted(false);
     setFinalScore(score);
+    setIsFullscreen(false);
     toast.info(`Game Over! You scored ${score} points!`);
   };
   
@@ -37,19 +40,25 @@ const Game = () => {
     setTelegramUsername('');
     // Since we don't have a backend, we're just showing a success message
   };
+
+  const handleFullscreenToggle = (enterFullscreen: boolean) => {
+    setIsFullscreen(enterFullscreen);
+  };
   
   return (
-    <div className="min-h-screen space-bg flex flex-col">
-      <Navbar />
+    <div className={`${isFullscreen ? 'fullscreen-game' : 'min-h-screen space-bg flex flex-col'}`}>
+      {!isFullscreen && <Navbar />}
       
-      <main className="flex-grow container mx-auto px-4 py-24">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-4">PHOOEY to the Mars</h1>
-          <p className="text-xl text-gray-300">Help PHOOEY fly through space, collect cheese, and reach Mars!</p>
-        </div>
+      <main className={`${isFullscreen ? 'fullscreen-container' : 'flex-grow container mx-auto px-4 py-24'}`}>
+        {!isFullscreen && (
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-4">PHOOEY to the Mars</h1>
+            <p className="text-xl text-gray-300">Help PHOOEY fly through space, collect cheese, and reach Mars!</p>
+          </div>
+        )}
         
-        <div className="glass-card p-6 md:p-8 rounded-xl max-w-4xl mx-auto">
-          {!gameStarted && !gameEnded && (
+        <div className={`${isFullscreen ? 'fullscreen-game-container' : 'glass-card p-6 md:p-8 rounded-xl max-w-4xl mx-auto'}`}>
+          {!gameStarted && !gameEnded && !isFullscreen && (
             <div className="text-center py-8">
               <div className="mb-8">
                 <img 
@@ -69,7 +78,11 @@ const Game = () => {
           )}
           
           {gameStarted && (
-            <PhooeyGame onGameEnd={handleGameEnd} />
+            <PhooeyGame 
+              onGameEnd={handleGameEnd} 
+              isFullscreen={isFullscreen}
+              onFullscreenToggle={handleFullscreenToggle}
+            />
           )}
           
           {gameEnded && (
@@ -110,12 +123,14 @@ const Game = () => {
           )}
         </div>
         
-        <div className="mt-12">
-          <GameLeaderboard />
-        </div>
+        {!isFullscreen && (
+          <div className="mt-12">
+            <GameLeaderboard />
+          </div>
+        )}
       </main>
       
-      <Footer />
+      {!isFullscreen && <Footer />}
     </div>
   );
 };

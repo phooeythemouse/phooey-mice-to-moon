@@ -60,7 +60,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">PHOOEY to the Mars</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">Help PHOOEY navigate through space, collect cheese, and reach Mars in our new browser game!</p>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">Help PHOOEY navigate through space, collect cheese, and reach Mars in our new fullscreen mobile game!</p>
           </div>
           
           <div className="glass-card p-8 rounded-xl relative overflow-hidden">
@@ -79,10 +79,13 @@ const HomePage = () => {
                 </p>
                 <Link
                   to="/game"
-                  className="btn-glow bg-gradient-to-r from-space-blue to-space-accent px-8 py-3 rounded-full text-white font-bold transition-all hover:scale-105"
+                  className="btn-glow bg-gradient-to-r from-space-blue to-space-accent px-8 py-3 rounded-full text-white font-bold transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto md:mx-0 max-w-xs"
                 >
-                  Play Now 🚀
+                  Play Fullscreen 🚀
                 </Link>
+                <p className="mt-4 text-sm text-gray-400">
+                  Optimized for mobile devices - play in fullscreen mode!
+                </p>
               </div>
             </div>
             
