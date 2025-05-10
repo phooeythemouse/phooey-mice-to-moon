@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import OptimizedImage from '@/components/OptimizedImage';
 import WalletButton from '@/components/WalletButton';
 import SocialIcon from '@/components/SocialIcon';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,7 @@ const Navbar = () => {
     { name: 'Token', path: '/token' },
     { name: 'NFT Collection', path: '/nft' },
     { name: 'Community', path: '/community' },
+    { name: 'Game', path: '/game' },
     { name: 'Fun Zone', path: '/fun' },
   ];
 

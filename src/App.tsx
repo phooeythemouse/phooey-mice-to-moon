@@ -16,6 +16,7 @@ const Token = lazy(() => import("./pages/Token"));
 const Community = lazy(() => import("./pages/Community"));
 const Fun = lazy(() => import("./pages/Fun"));
 const NFT = lazy(() => import("./pages/NFT"));
+const Game = lazy(() => import("./pages/Game"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -83,6 +84,7 @@ const App = () => (
               <Route path="/token" element={<Token />} />
               <Route path="/nft" element={<NFT />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/game" element={<Game />} />
               <Route path="/fun" element={<Fun />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
