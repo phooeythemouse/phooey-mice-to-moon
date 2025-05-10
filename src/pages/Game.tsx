@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PhooeyGame from '@/components/PhooeyGame';
@@ -44,12 +44,25 @@ const Game = () => {
   const handleFullscreenToggle = (enterFullscreen: boolean) => {
     setIsFullscreen(enterFullscreen);
   };
+
+  // Effect to initialize game properly on mobile
+  useEffect(() => {
+    // Force a re-render when the component mounts to ensure proper canvas initialization
+    const timer = setTimeout(() => {
+      if (!gameStarted && !gameEnded) {
+        // This small state update triggers a re-render
+        setFinalScore(0);
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [gameStarted, gameEnded]);
   
   return (
     <div className={`${isFullscreen ? 'fullscreen-game' : 'min-h-screen space-bg flex flex-col'}`}>
       {!isFullscreen && <Navbar />}
       
-      <main className={`${isFullscreen ? 'fullscreen-container' : 'flex-grow container mx-auto px-4 py-24'}`}>
+      <main className={`${isFullscreen ? 'fullscreen-container' : 'flex-grow container mx-auto px-4 py-8 md:py-24'}`}>
         {!isFullscreen && (
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-4">PHOOEY to the Mars</h1>
@@ -57,7 +70,7 @@ const Game = () => {
           </div>
         )}
         
-        <div className={`${isFullscreen ? 'fullscreen-game-container' : 'glass-card p-6 md:p-8 rounded-xl max-w-4xl mx-auto'}`}>
+        <div className={`${isFullscreen ? 'fullscreen-game-container' : 'glass-card p-4 md:p-8 rounded-xl mx-auto'}`}>
           {!gameStarted && !gameEnded && !isFullscreen && (
             <div className="text-center py-8">
               <div className="mb-8">

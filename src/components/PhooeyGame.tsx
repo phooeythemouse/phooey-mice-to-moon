@@ -33,6 +33,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   const [gameTime, setGameTime] = useState(0);
   const [boostMode, setBoostMode] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 360, height: 640 });
+  const [initialized, setInitialized] = useState(false);
   const isMobile = useIsMobile();
   
   // Asset references
@@ -52,6 +53,31 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   const cheeseCollectSoundRef = useRef<HTMLAudioElement | null>(null);
   const crashSoundRef = useRef<HTMLAudioElement | null>(null);
   const bgMusicRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize canvas size based on container
+  const initializeCanvasSize = useCallback(() => {
+    if (!gameContainerRef.current) return;
+    
+    const containerWidth = gameContainerRef.current.clientWidth;
+    let newWidth, newHeight;
+    
+    // Keep 16:9 aspect ratio for the game
+    if (isFullscreen) {
+      // Use the full screen dimensions if in fullscreen
+      handleResize();
+    } else {
+      // In normal mode, fit to container width
+      newWidth = Math.min(containerWidth, 500); // Max width of 500px in normal mode
+      newHeight = newWidth * (16/9);
+      
+      setCanvasSize({
+        width: Math.floor(newWidth),
+        height: Math.floor(newHeight)
+      });
+    }
+    
+    setInitialized(true);
+  }, [isFullscreen]);
 
   // Fullscreen handling
   const enterFullscreen = useCallback(() => {
@@ -76,13 +102,13 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         .then(() => {
           if (onFullscreenToggle) onFullscreenToggle(false);
           // Reset canvas size
-          setCanvasSize({ width: 360, height: 640 });
+          initializeCanvasSize();
         })
         .catch(err => {
           console.error('Error attempting to exit fullscreen:', err);
         });
     }
-  }, [onFullscreenToggle]);
+  }, [onFullscreenToggle, initializeCanvasSize]);
   
   const toggleFullscreen = useCallback(() => {
     if (document.fullscreenElement) {
@@ -99,7 +125,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       if (onFullscreenToggle) onFullscreenToggle(isFullscreenActive);
       if (!isFullscreenActive) {
         // Reset canvas size when exiting fullscreen
-        setCanvasSize({ width: 360, height: 640 });
+        initializeCanvasSize();
       }
     };
     
@@ -107,7 +133,24 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [onFullscreenToggle]);
+  }, [onFullscreenToggle, initializeCanvasSize]);
+  
+  // Initialize canvas size on component mount and when container size changes
+  useEffect(() => {
+    initializeCanvasSize();
+    
+    // Re-initialize on window resize when not in fullscreen
+    if (!isFullscreen) {
+      const handleWindowResize = () => {
+        initializeCanvasSize();
+      };
+      
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+        window.removeEventListener('resize', handleWindowResize);
+      };
+    }
+  }, [initializeCanvasSize, isFullscreen]);
   
   // Handle screen resize
   const handleResize = useCallback(() => {
@@ -147,9 +190,9 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     if (isFullscreen) {
       handleResize();
     } else {
-      setCanvasSize({ width: 360, height: 640 });
+      initializeCanvasSize();
     }
-  }, [isFullscreen, handleResize]);
+  }, [isFullscreen, handleResize, initializeCanvasSize]);
 
   // Load game assets
   useEffect(() => {
@@ -177,18 +220,27 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         marsImageRef.current = await loadImage('/lovable-uploads/mars.webp');
         solanaImageRef.current = await loadImage('/lovable-uploads/solana.webp');
 
-        // Create player object
-        const playerObject: GameObject = {
-          x: canvasSize.width / 2 - 25,
-          y: canvasSize.height - 100,
-          width: 50,
-          height: 50,
-          speed: 0,
-          type: 'player',
-          image: playerImageRef.current
+        // Create player object once we know the canvas size
+        const createPlayerObject = () => {
+          const playerObject: GameObject = {
+            x: canvasSize.width / 2 - 25,
+            y: canvasSize.height - 100,
+            width: 50,
+            height: 50,
+            speed: 0,
+            type: 'player',
+            image: playerImageRef.current!
+          };
+          
+          setGameObjects([playerObject]);
         };
-
-        setGameObjects([playerObject]);
+        
+        // If canvas size is initialized, create player now
+        // Otherwise it will be created in the useEffect below
+        if (initialized) {
+          createPlayerObject();
+        }
+        
         assetsLoaded.current = true;
         
         // Create audio elements
@@ -224,6 +276,28 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Create player object when canvas size is initialized and assets are loaded
+  useEffect(() => {
+    if (initialized && assetsLoaded.current && gameObjects.length === 0 && playerImageRef.current) {
+      const playerObject: GameObject = {
+        x: canvasSize.width / 2 - 25,
+        y: canvasSize.height - 100,
+        width: 50,
+        height: 50,
+        speed: 0,
+        type: 'player',
+        image: playerImageRef.current
+      };
+      
+      setGameObjects([playerObject]);
+      
+      // Start game loop if it's not already running
+      if (gameLoop === null) {
+        startGameLoop();
+      }
+    }
+  }, [initialized, gameObjects.length, canvasSize, gameLoop]);
+
   // Play background music
   useEffect(() => {
     if (assetsLoaded.current && bgMusicRef.current) {
@@ -239,14 +313,14 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     };
   }, [assetsLoaded.current]);
 
-  const startGameLoop = () => {
+  const startGameLoop = useCallback(() => {
     if (gameLoop !== null) {
       cancelAnimationFrame(gameLoop);
     }
     
     const loop = requestAnimationFrame(gameUpdate);
     setGameLoop(loop);
-  };
+  }, []);
 
   const spawnGameObject = () => {
     if (!assetsLoaded.current) return;
@@ -320,8 +394,8 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     }
   };
 
-  const gameUpdate = () => {
-    if (!canvasRef.current || !assetsLoaded.current) {
+  const gameUpdate = useCallback(() => {
+    if (!canvasRef.current || !assetsLoaded.current || gameObjects.length === 0) {
       const nextLoop = requestAnimationFrame(gameUpdate);
       setGameLoop(nextLoop);
       return;
@@ -423,7 +497,9 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     
     // Draw all objects
     updatedObjects.forEach(obj => {
-      ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
+      if (obj.image) {
+        ctx.drawImage(obj.image, obj.x, obj.y, obj.width, obj.height);
+      }
     });
     
     // Draw score
@@ -458,9 +534,9 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     // Continue game loop
     const nextLoop = requestAnimationFrame(gameUpdate);
     setGameLoop(nextLoop);
-  };
+  }, [canvasSize.width, canvasSize.height, gameObjects, gameTime, gameStartTime, boostMode, playerVelocity, score]);
 
-  const handleBoost = () => {
+  const handleBoost = useCallback(() => {
     setBoostMode(true);
     setPlayerVelocity(-5);
     
@@ -473,9 +549,9 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     setTimeout(() => {
       setBoostMode(false);
     }, 200);
-  };
+  }, []);
 
-  const endGame = (success = false) => {
+  const endGame = useCallback((success = false) => {
     if (gameLoop !== null) {
       cancelAnimationFrame(gameLoop);
       setGameLoop(null);
@@ -498,18 +574,18 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     
     // Call the onGameEnd callback with the final score
     onGameEnd(finalScore);
-  };
+  }, [gameLoop, score, onGameEnd]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.code === 'Space' || e.key === ' ' || e.code === 'ArrowUp') {
       handleBoost();
     }
-  };
+  }, [handleBoost]);
 
   return (
     <div 
       ref={gameContainerRef}
-      className={`game-container relative ${isFullscreen ? 'fullscreen-game-container' : 'w-full max-w-sm mx-auto'}`}
+      className={`game-container relative ${isFullscreen ? 'fullscreen-game-container' : 'w-full max-w-md mx-auto'}`}
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
@@ -519,7 +595,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         height={canvasSize.height}
         className={`
           bg-space-dark border-2 border-space-blue rounded-lg mx-auto
-          ${isFullscreen ? 'fullscreen-canvas' : ''}
+          ${isFullscreen ? 'fullscreen-canvas' : 'w-full h-auto'}
         `}
         onClick={handleBoost}
         onTouchStart={handleBoost}
