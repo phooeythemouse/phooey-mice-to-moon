@@ -1,12 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PhooeyGame from '@/components/PhooeyGame';
 import GameLeaderboard from '@/components/GameLeaderboard';
 import { toast } from 'sonner';
 import { ArrowUpRight } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
+
+// Dynamically import the game component to isolate potential issues
+const PhooeyGame = React.lazy(() => import('@/components/PhooeyGame'));
 
 const Game = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -15,16 +17,33 @@ const Game = () => {
   const [telegramUsername, setTelegramUsername] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [gameKey, setGameKey] = useState(Date.now());
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  
+  useEffect(() => {
+    // Set loading state with timeout to ensure it gets reset
+    const timer = setTimeout(() => {
+      console.log("Game component initialized");
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleStartGame = () => {
+    console.log("Starting game...");
+    
     // Reset game state and generate a new key to force component remount
     setGameKey(Date.now());
     setGameStarted(true);
     setGameEnded(false);
     setFinalScore(0);
+    setLoadError(false);
   };
   
   const handleGameEnd = (score: number) => {
+    console.log(`Game ended with score: ${score}`);
+    
     setGameEnded(true);
     setGameStarted(false);
     setFinalScore(score);
@@ -42,7 +61,6 @@ const Game = () => {
     // Here we would normally submit the score to a backend
     toast.success(`Score submitted! ${telegramUsername} scored ${finalScore} points!`);
     setTelegramUsername('');
-    // Since we don't have a backend, we're just showing a success message
   };
 
   const handleFullscreenToggle = (enterFullscreen: boolean) => {
@@ -50,17 +68,12 @@ const Game = () => {
     setIsFullscreen(enterFullscreen);
   };
 
-  // Force an initial re-render to help with canvas initialization on mobile
-  useEffect(() => {
-    // Add a small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      console.log("Forcing game re-render to ensure proper initialization");
-      // This forced re-render helps ensure the canvas is properly initialized
-      setGameKey(Date.now());
-    }, 200);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const handleGameError = () => {
+    console.log("Game error detected");
+    setLoadError(true);
+    setGameStarted(false);
+    toast.error("There was a problem loading the game. Please try again.");
+  };
   
   return (
     <div className={`${isFullscreen ? 'fullscreen-game fixed inset-0 z-50 bg-space-dark' : 'min-h-screen space-bg flex flex-col'}`}>
@@ -75,6 +88,7 @@ const Game = () => {
         )}
         
         <div className={`${isFullscreen ? 'fullscreen-game-container h-full w-full' : 'glass-card p-4 md:p-8 rounded-xl mx-auto max-w-lg'}`}>
+          {/* Game start screen */}
           {!gameStarted && !gameEnded && !isFullscreen && (
             <div className="text-center py-8">
               <div className="mb-8">
@@ -94,15 +108,50 @@ const Game = () => {
             </div>
           )}
           
+          {/* Game play area */}
           {gameStarted && (
-            <PhooeyGame 
-              key={gameKey} // Add a key to force re-render when game starts
-              onGameEnd={handleGameEnd} 
-              isFullscreen={isFullscreen}
-              onFullscreenToggle={handleFullscreenToggle}
-            />
+            <Suspense fallback={
+              <div className="flex flex-col items-center justify-center p-8 h-64">
+                <OptimizedImage 
+                  src="/lovable-uploads/phooey.webp" 
+                  alt="PHOOEY" 
+                  className="h-16 w-16 mx-auto animate-bounce" 
+                />
+                <p className="mt-4 text-lg text-space-accent">Preparing for liftoff...</p>
+              </div>
+            }>
+              <PhooeyGame 
+                key={gameKey} // Add a key to force re-render when game starts
+                onGameEnd={handleGameEnd} 
+                isFullscreen={isFullscreen}
+                onFullscreenToggle={handleFullscreenToggle}
+                onError={handleGameError}
+              />
+            </Suspense>
           )}
           
+          {/* Error state */}
+          {loadError && (
+            <div className="text-center py-8">
+              <div className="mb-6">
+                <OptimizedImage 
+                  src="/lovable-uploads/phooey.webp" 
+                  alt="PHOOEY" 
+                  className="h-24 w-24 mx-auto opacity-60" 
+                />
+                <p className="text-xl mt-4 text-red-400">Houston, we have a problem!</p>
+                <p className="mt-2 text-gray-400">The game failed to load properly.</p>
+              </div>
+              <button 
+                onClick={handleStartGame}
+                className="btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300 text-lg mt-4"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+          
+          {/* Game end screen */}
           {gameEnded && (
             <div className="text-center py-6">
               <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
