@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Maximize, Minimize, Gamepad2, VolumeX, Volume2 } from 'lucide-react';
@@ -23,7 +22,7 @@ interface PhooeyGameProps {
 // List of game assets with their paths for more organized loading
 const GAME_ASSETS = {
   images: {
-    player: '/lovable-uploads/idle.webp',
+    player: '/lovable-uploads/phooey.webp',
     playerJet: '/lovable-uploads/jet.webp',
     playerJetSpeed: '/lovable-uploads/jetsp.webp',
     cheese: '/lovable-uploads/cheese.webp',
