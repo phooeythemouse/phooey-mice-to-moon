@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GameLeaderboard from '@/components/GameLeaderboard';
@@ -31,14 +31,6 @@ const Game = () => {
       console.log("Game component initialized");
     }, 1000);
     
-    // Handle potential errors during initialization
-    try {
-      setGameInitialized(true);
-    } catch (error) {
-      console.error("Error initializing game:", error);
-      setLoadError(true);
-    }
-    
     // Pre-load key assets
     const preloadAssets = async () => {
       try {
@@ -54,8 +46,16 @@ const Game = () => {
           const audio = new Audio();
           audio.preload = "auto";
           audio.src = file;
-          // Don't actually play it, just load it
+          // Load audio file to cache it
           audio.load();
+          // Try to play and immediately pause to ensure it's ready
+          audio.volume = 0;
+          audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+          }).catch(err => {
+            console.log("Audio preload error (non-critical):", err);
+          });
         });
       } catch (err) {
         console.log("Asset preloading error:", err);
@@ -63,9 +63,20 @@ const Game = () => {
       }
     };
     
+    // Try to preload assets
     preloadAssets();
     
     return () => clearTimeout(timer);
+  }, []);
+
+  // Initialize the game
+  useEffect(() => {
+    try {
+      setGameInitialized(true);
+    } catch (error) {
+      console.error("Error initializing game:", error);
+      setLoadError(true);
+    }
   }, []);
   
   const handleStartGame = useCallback(() => {
@@ -186,16 +197,18 @@ const Game = () => {
       );
     }
     
-    // Game play area
+    // Game play area with error boundary
     if (gameStarted) {
       return (
-        <PhooeyGame 
-          key={gameKey}
-          onGameEnd={handleGameEnd} 
-          isFullscreen={isFullscreen}
-          onFullscreenToggle={handleFullscreenToggle}
-          onError={handleGameError}
-        />
+        <ErrorBoundary fallback={<GameErrorFallback onRetry={handleStartGame} />}>
+          <PhooeyGame 
+            key={gameKey}
+            onGameEnd={handleGameEnd} 
+            isFullscreen={isFullscreen}
+            onFullscreenToggle={handleFullscreenToggle}
+            onError={handleGameError}
+          />
+        </ErrorBoundary>
       );
     }
     
@@ -241,6 +254,49 @@ const Game = () => {
     
     return null;
   };
+
+  // Simple error boundary component
+  const ErrorBoundary = ({ children, fallback }: { children: React.ReactNode, fallback: React.ReactNode }) => {
+    const [hasError, setHasError] = useState(false);
+    
+    useEffect(() => {
+      const handleError = () => {
+        setHasError(true);
+      };
+      
+      window.addEventListener('error', handleError);
+      return () => {
+        window.removeEventListener('error', handleError);
+      };
+    }, []);
+    
+    if (hasError) {
+      return <>{fallback}</>;
+    }
+    
+    return <>{children}</>;
+  };
+  
+  // Error fallback component
+  const GameErrorFallback = ({ onRetry }: { onRetry: () => void }) => (
+    <div className="text-center py-8">
+      <div className="mb-6">
+        <OptimizedImage 
+          src="/lovable-uploads/phooey.webp" 
+          alt="PHOOEY" 
+          className="h-24 w-24 mx-auto opacity-60" 
+        />
+        <p className="text-xl mt-4 text-red-400">Game crashed!</p>
+        <p className="mt-2 text-gray-400">There was a problem with the game.</p>
+      </div>
+      <button 
+        onClick={onRetry}
+        className="btn-glow bg-gradient-to-r from-space-blue to-space-accent hover:bg-opacity-80 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 duration-300 text-lg mt-4"
+      >
+        Try Again
+      </button>
+    </div>
+  );
   
   return (
     <div className={`${isFullscreen ? 'fullscreen-game fixed inset-0 z-50 bg-space-dark' : 'min-h-screen space-bg flex flex-col'}`}>

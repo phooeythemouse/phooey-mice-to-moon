@@ -308,7 +308,9 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         if (crashSoundRef.current) crashSoundRef.current.muted = true;
       } else {
         // Unmute all audio
-        if (bgMusicRef.current && gameObjects.length > 0) bgMusicRef.current.play().catch(e => console.log('Audio play failed:', e));
+        if (bgMusicRef.current && gameObjects.length > 0) {
+          bgMusicRef.current.play().catch(e => console.log('Audio play failed:', e));
+        }
         if (boostSoundRef.current) boostSoundRef.current.muted = false;
         if (cheeseCollectSoundRef.current) cheeseCollectSoundRef.current.muted = false;
         if (crashSoundRef.current) crashSoundRef.current.muted = false;
@@ -317,6 +319,50 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       return newState;
     });
   }, [gameObjects.length]);
+
+  // Create dummy audio elements for mobile browsers
+  const createDummyAudio = () => {
+    try {
+      // Create temporary audio elements for each sound
+      const tempSounds = [
+        new Audio('/boost.mp3'),
+        new Audio('/collect.mp3'),
+        new Audio('/crash.mp3'),
+        new Audio('/space-music.mp3')
+      ];
+      
+      // Set volume to 0 and try to play them
+      tempSounds.forEach(sound => {
+        sound.volume = 0;
+        sound.play().then(() => {
+          sound.pause();
+          sound.currentTime = 0;
+        }).catch(e => {
+          console.log('Initial audio play failed (expected on some browsers):', e);
+        });
+      });
+    } catch (err) {
+      console.error('Error creating dummy audio:', err);
+    }
+  };
+
+  // Initialize audio context for iOS devices
+  useEffect(() => {
+    // Try to initialize audio on first user interaction
+    const handleInitAudio = () => {
+      createDummyAudio();
+      document.removeEventListener('click', handleInitAudio);
+      document.removeEventListener('touchstart', handleInitAudio);
+    };
+    
+    document.addEventListener('click', handleInitAudio);
+    document.addEventListener('touchstart', handleInitAudio);
+    
+    return () => {
+      document.removeEventListener('click', handleInitAudio);
+      document.removeEventListener('touchstart', handleInitAudio);
+    };
+  }, []);
 
   // Load game assets
   useEffect(() => {
@@ -369,7 +415,15 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
             // Create a dummy audio element that won't crash
             const dummyAudio = new Audio();
             // Set up a fake play method that won't cause errors
-            dummyAudio.play = async () => Promise.resolve();
+            const originalPlay = dummyAudio.play;
+            dummyAudio.play = async () => {
+              try {
+                return await originalPlay.call(dummyAudio);
+              } catch (e) {
+                console.log('Audio play failed (using dummy):', e);
+                return Promise.resolve();
+              }
+            };
             setAssetLoadProgress(prev => prev + progressValue);
             resolve(dummyAudio);
           };
@@ -377,6 +431,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
           // Start loading
           audio.preload = 'auto';
           audio.src = src;
+          audio.load();
         });
       };
 
@@ -413,6 +468,9 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
           }
           
           console.log('All audio loaded successfully');
+          
+          // Trigger a user interaction simulation to enable audio on some browsers
+          createDummyAudio();
         } catch (audioError) {
           console.error('Failed to load audio assets:', audioError);
           // Continue the game even if audio fails to load
@@ -509,9 +567,26 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   // Play background music
   useEffect(() => {
     if (assetsLoaded && bgMusicRef.current && gameObjects.length > 0 && soundEnabled) {
-      bgMusicRef.current.play().catch(error => {
-        console.log('Audio play failed:', error);
-      });
+      // Attempt to play background music
+      const playMusic = () => {
+        if (bgMusicRef.current) {
+          bgMusicRef.current.volume = 0.2;
+          bgMusicRef.current.play().catch(error => {
+            console.log('Background music play failed:', error);
+            // Try again with user interaction
+            document.addEventListener('click', handleUserInteraction, { once: true });
+            document.addEventListener('touchstart', handleUserInteraction, { once: true });
+          });
+        }
+      };
+      
+      const handleUserInteraction = () => {
+        if (bgMusicRef.current && soundEnabled) {
+          bgMusicRef.current.play().catch(err => console.log('Music play still failed:', err));
+        }
+      };
+      
+      playMusic();
     }
     
     return () => {
@@ -810,11 +885,20 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     onGameEnd(finalScore);
   }, [gameLoop, score, onGameEnd]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.code === 'Space' || e.key === ' ' || e.code === 'ArrowUp') {
       handleBoost();
+      e.preventDefault(); // Prevent page scrolling
     }
   }, [handleBoost]);
+
+  // Add keyboard event listener
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   // Error handling - check for failed initialization
   useEffect(() => {
@@ -823,7 +907,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         console.error('Game failed to initialize properly');
         if (onError) onError();
       }
-    }, 5000); // Allow 5 seconds for initialization
+    }, 10000); // Allow 10 seconds for initialization
     
     return () => clearTimeout(checkInitialization);
   }, [initialized, assetsLoaded, onError]);
@@ -833,7 +917,6 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       ref={gameContainerRef}
       className={`game-container relative ${isFullscreen ? 'fullscreen-game-container' : 'w-full max-w-md mx-auto'}`}
       tabIndex={0}
-      onKeyDown={handleKeyDown}
     >
       <canvas
         ref={canvasRef}
@@ -915,13 +998,13 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       {/* Loading indication - improved visibility */}
       {(isAssetLoading || !initialized || !assetsLoaded || gameObjects.length === 0) && (
         <div className="absolute inset-0 flex items-center justify-center bg-space-dark/80 z-10 rounded-lg">
-          <div className="text-center">
+          <div className="text-center p-4">
             <img 
               src="/lovable-uploads/phooey.webp" 
               alt="PHOOEY" 
               className="h-16 w-16 mx-auto animate-bounce" 
             />
-            <p className="text-white mt-4">Loading game...</p>
+            <p className="text-white mt-4 text-xl">Loading game...</p>
             
             {isAssetLoading && (
               <div className="mt-4 w-48 mx-auto">
