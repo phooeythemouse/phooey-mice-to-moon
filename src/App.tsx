@@ -1,18 +1,19 @@
+
 import React, { lazy, Suspense, useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import PerformanceMonitor from "./components/PerformanceMonitor";
 import { WalletProvider } from "./providers/WalletProvider";
 
-// Eagerly load the Game component to avoid dynamic import issues
+// Eagerly load these components to prevent dynamic import issues
 import Game from "./pages/Game";
+import Index from "./pages/Index";
 
 // Lazy load other pages for better performance
-const Index = lazy(() => import("./pages/Index"));
 const About = lazy(() => import("./pages/About"));
 const Token = lazy(() => import("./pages/Token"));
 const Community = lazy(() => import("./pages/Community"));
@@ -38,6 +39,28 @@ const PageLoader = () => (
   </div>
 );
 
+// Create a fallback error page component
+const ErrorFallback = ({ resetErrorBoundary }: { resetErrorBoundary?: () => void }) => (
+  <div className="flex items-center justify-center min-h-screen bg-space-dark flex-col p-4">
+    <h2 className="text-2xl font-bold text-white mb-4">Something went wrong</h2>
+    <p className="text-gray-300 mb-6">We encountered an error loading this page.</p>
+    <div className="flex flex-col sm:flex-row gap-4">
+      <button 
+        onClick={() => window.location.reload()} 
+        className="bg-space-blue hover:bg-space-accent text-white font-bold py-2 px-6 rounded"
+      >
+        Refresh Page
+      </button>
+      <button 
+        onClick={() => window.location.href = '/'} 
+        className="bg-space-accent hover:bg-space-blue text-white font-bold py-2 px-6 rounded"
+      >
+        Return Home
+      </button>
+    </div>
+  </div>
+);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -51,26 +74,41 @@ const queryClient = new QueryClient({
 const App = () => {
   // Add error boundary state
   const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Reset error state when route changes
   useEffect(() => {
     setHasError(false);
   }, [window.location.pathname]);
+  
+  // Set loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Add global error handler
+  useEffect(() => {
+    const handleError = () => {
+      console.error("Global error caught");
+      setHasError(true);
+    };
+    
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
 
   // Handle error fallback
   if (hasError) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-space-dark flex-col p-4">
-        <h2 className="text-2xl font-bold text-white mb-4">Something went wrong</h2>
-        <p className="text-gray-300 mb-4">We encountered an error loading this page.</p>
-        <button 
-          onClick={() => window.location.href = '/'} 
-          className="bg-space-blue hover:bg-space-accent text-white font-bold py-2 px-4 rounded"
-        >
-          Return Home
-        </button>
-      </div>
-    );
+    return <ErrorFallback />;
+  }
+  
+  // Show initial loader
+  if (isLoading) {
+    return <PageLoader />;
   }
 
   return (
@@ -105,23 +143,28 @@ const App = () => {
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
               <Routes>
+                {/* Eagerly loaded routes */}
                 <Route path="/" element={<Index />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/token" element={<Token />} />
-                <Route path="/nft" element={<NFT />} />
-                <Route path="/community" element={<Community />} />
                 <Route path="/game" element={
-                  // Wrap Game component in its own error boundary
                   <ErrorBoundaryWrapper>
                     <Game />
                   </ErrorBoundaryWrapper>
                 } />
+                
+                {/* Lazily loaded routes */}
+                <Route path="/about" element={<About />} />
+                <Route path="/token" element={<Token />} />
+                <Route path="/nft" element={<NFT />} />
+                <Route path="/community" element={<Community />} />
                 <Route path="/fun" element={<Fun />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<NotFound />} />
+                
+                {/* Handle 404s */}
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate replace to="/404" />} />
               </Routes>
             </Suspense>
           </BrowserRouter>
@@ -131,15 +174,16 @@ const App = () => {
   );
 };
 
-// Simple error boundary wrapper component
+// Improved error boundary wrapper component
 const ErrorBoundaryWrapper = ({ children }: { children: React.ReactNode }) => {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     // Set up an error handler for the wrapped component
-    const handleError = () => {
+    const handleError = (event: ErrorEvent) => {
+      event.preventDefault();
+      console.error("Error boundary caught:", event.error || event.message);
       setHasError(true);
-      console.log("Error boundary caught an error in the game component");
     };
 
     window.addEventListener('error', handleError);
@@ -155,18 +199,23 @@ const ErrorBoundaryWrapper = ({ children }: { children: React.ReactNode }) => {
         <div className="flex-grow container mx-auto px-4 py-8 md:py-24 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Game Loading Error</h2>
           <p className="text-gray-300 mb-4">We encountered an issue loading the game.</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="bg-space-blue hover:bg-space-accent text-white font-bold py-2 px-4 rounded mx-2"
-          >
-            Try Again
-          </button>
-          <a 
-            href="/"
-            className="bg-space-accent hover:bg-space-blue text-white font-bold py-2 px-4 rounded mx-2 inline-block mt-2 md:mt-0"
-          >
-            Return Home
-          </a>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+            <button 
+              onClick={() => {
+                setHasError(false);
+                window.location.reload();
+              }} 
+              className="bg-space-blue hover:bg-space-accent text-white font-bold py-2 px-6 rounded"
+            >
+              Try Again
+            </button>
+            <a 
+              href="/"
+              className="bg-space-accent hover:bg-space-blue text-white font-bold py-2 px-6 rounded inline-flex justify-center items-center"
+            >
+              Return Home
+            </a>
+          </div>
         </div>
       </div>
     );
