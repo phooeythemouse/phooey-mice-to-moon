@@ -45,18 +45,19 @@ const Game = () => {
     setIsFullscreen(enterFullscreen);
   };
 
-  // Effect to initialize game properly on mobile
+  // Force an initial re-render to help with canvas initialization on mobile
   useEffect(() => {
-    // Force a re-render when the component mounts to ensure proper canvas initialization
+    // Add a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
-      if (!gameStarted && !gameEnded) {
-        // This small state update triggers a re-render
-        setFinalScore(0);
-      }
-    }, 100);
+      console.log("Forcing game re-render to ensure proper initialization");
+      // This forced re-render helps ensure the canvas is properly initialized
+      setGameStarted(false);
+      setGameEnded(false);
+      setFinalScore(0);
+    }, 200);
     
     return () => clearTimeout(timer);
-  }, [gameStarted, gameEnded]);
+  }, []);
   
   return (
     <div className={`${isFullscreen ? 'fullscreen-game' : 'min-h-screen space-bg flex flex-col'}`}>
@@ -92,6 +93,7 @@ const Game = () => {
           
           {gameStarted && (
             <PhooeyGame 
+              key={Date.now()} // Add a key to force re-render when game starts
               onGameEnd={handleGameEnd} 
               isFullscreen={isFullscreen}
               onFullscreenToggle={handleFullscreenToggle}
