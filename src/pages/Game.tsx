@@ -6,6 +6,7 @@ import PhooeyGame from '@/components/PhooeyGame';
 import GameLeaderboard from '@/components/GameLeaderboard';
 import { toast } from 'sonner';
 import { ArrowUpRight } from 'lucide-react';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const Game = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -13,8 +14,11 @@ const Game = () => {
   const [finalScore, setFinalScore] = useState(0);
   const [telegramUsername, setTelegramUsername] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [gameKey, setGameKey] = useState(Date.now());
   
   const handleStartGame = () => {
+    // Reset game state and generate a new key to force component remount
+    setGameKey(Date.now());
     setGameStarted(true);
     setGameEnded(false);
     setFinalScore(0);
@@ -42,6 +46,7 @@ const Game = () => {
   };
 
   const handleFullscreenToggle = (enterFullscreen: boolean) => {
+    console.log('Fullscreen toggle called:', enterFullscreen);
     setIsFullscreen(enterFullscreen);
   };
 
@@ -51,19 +56,17 @@ const Game = () => {
     const timer = setTimeout(() => {
       console.log("Forcing game re-render to ensure proper initialization");
       // This forced re-render helps ensure the canvas is properly initialized
-      setGameStarted(false);
-      setGameEnded(false);
-      setFinalScore(0);
+      setGameKey(Date.now());
     }, 200);
     
     return () => clearTimeout(timer);
   }, []);
   
   return (
-    <div className={`${isFullscreen ? 'fullscreen-game' : 'min-h-screen space-bg flex flex-col'}`}>
+    <div className={`${isFullscreen ? 'fullscreen-game fixed inset-0 z-50 bg-space-dark' : 'min-h-screen space-bg flex flex-col'}`}>
       {!isFullscreen && <Navbar />}
       
-      <main className={`${isFullscreen ? 'fullscreen-container' : 'flex-grow container mx-auto px-4 py-8 md:py-24'}`}>
+      <main className={`${isFullscreen ? 'fullscreen-container h-full w-full flex items-center justify-center' : 'flex-grow container mx-auto px-4 py-8 md:py-24'}`}>
         {!isFullscreen && (
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-4">PHOOEY to the Mars</h1>
@@ -71,11 +74,11 @@ const Game = () => {
           </div>
         )}
         
-        <div className={`${isFullscreen ? 'fullscreen-game-container' : 'glass-card p-4 md:p-8 rounded-xl mx-auto'}`}>
+        <div className={`${isFullscreen ? 'fullscreen-game-container h-full w-full' : 'glass-card p-4 md:p-8 rounded-xl mx-auto max-w-lg'}`}>
           {!gameStarted && !gameEnded && !isFullscreen && (
             <div className="text-center py-8">
               <div className="mb-8">
-                <img 
+                <OptimizedImage 
                   src="/lovable-uploads/phooey.webp" 
                   alt="PHOOEY" 
                   className="h-32 w-32 mx-auto animate-float" 
@@ -93,7 +96,7 @@ const Game = () => {
           
           {gameStarted && (
             <PhooeyGame 
-              key={Date.now()} // Add a key to force re-render when game starts
+              key={gameKey} // Add a key to force re-render when game starts
               onGameEnd={handleGameEnd} 
               isFullscreen={isFullscreen}
               onFullscreenToggle={handleFullscreenToggle}
@@ -105,7 +108,7 @@ const Game = () => {
               <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
               <div className="mb-6">
                 <p className="text-xl">Your Score: <span className="text-space-accent font-bold">{finalScore}</span></p>
-                <img src="/lovable-uploads/flag.webp" alt="PHOOEY with flag" className="h-32 w-32 mx-auto my-4" />
+                <OptimizedImage src="/lovable-uploads/flag.webp" alt="PHOOEY with flag" className="h-32 w-32 mx-auto my-4" />
               </div>
               
               <form onSubmit={handleSubmitScore} className="max-w-sm mx-auto">

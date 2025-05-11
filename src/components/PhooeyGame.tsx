@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Maximize, Minimize, Gamepad2 } from 'lucide-react';
@@ -35,6 +36,8 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   const [canvasSize, setCanvasSize] = useState({ width: 360, height: 640 });
   const [initialized, setInitialized] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [isAssetLoading, setIsAssetLoading] = useState(true);
+  const [assetLoadProgress, setAssetLoadProgress] = useState(0);
   const isMobile = useIsMobile();
   
   // Asset references
@@ -59,7 +62,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     console.log('Game State:', {
       canvasSize,
       initialized,
-      assetsLoaded: assetsLoaded,
+      assetsLoaded,
       gameObjectsCount: gameObjects.length,
       playerImage: playerImageRef.current ? 'Loaded' : 'Not Loaded',
       gameLoop: gameLoop !== null ? 'Running' : 'Not Running'
@@ -99,38 +102,67 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
 
   // Fullscreen handling
   const enterFullscreen = useCallback(() => {
-    if (!gameContainerRef.current) return;
+    console.log('Trying to enter fullscreen mode');
+    if (!gameContainerRef.current) {
+      console.log('No container ref available');
+      return;
+    }
     
-    if (gameContainerRef.current.requestFullscreen) {
-      gameContainerRef.current.requestFullscreen()
-        .then(() => {
-          console.log('Entered fullscreen mode');
-          if (onFullscreenToggle) onFullscreenToggle(true);
-          // Resize canvas to fit screen
-          handleResize();
-        })
-        .catch(err => {
-          console.error('Error attempting to enable fullscreen:', err);
-        });
+    try {
+      if (gameContainerRef.current.requestFullscreen) {
+        gameContainerRef.current.requestFullscreen()
+          .then(() => {
+            console.log('Entered fullscreen mode');
+            if (onFullscreenToggle) onFullscreenToggle(true);
+            
+            // Resize canvas to fit screen after a short delay
+            setTimeout(() => {
+              handleResize();
+            }, 100);
+          })
+          .catch(err => {
+            console.error('Error attempting to enable fullscreen:', err);
+          });
+      } else {
+        console.log('Fullscreen API not available');
+        // Fallback for browsers without fullscreen API
+        if (onFullscreenToggle) onFullscreenToggle(true);
+      }
+    } catch (e) {
+      console.error('Error in fullscreen request:', e);
     }
   }, [onFullscreenToggle]);
   
   const exitFullscreen = useCallback(() => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen()
-        .then(() => {
-          console.log('Exited fullscreen mode');
-          if (onFullscreenToggle) onFullscreenToggle(false);
-          // Reset canvas size
-          initializeCanvasSize();
-        })
-        .catch(err => {
-          console.error('Error attempting to exit fullscreen:', err);
-        });
+    console.log('Trying to exit fullscreen mode');
+    try {
+      if (document.fullscreenElement) {
+        document.exitFullscreen()
+          .then(() => {
+            console.log('Exited fullscreen mode');
+            if (onFullscreenToggle) onFullscreenToggle(false);
+            
+            // Reset canvas size
+            setTimeout(() => {
+              initializeCanvasSize();
+            }, 100);
+          })
+          .catch(err => {
+            console.error('Error attempting to exit fullscreen:', err);
+          });
+      } else {
+        console.log('Not in fullscreen mode according to API');
+        if (onFullscreenToggle) onFullscreenToggle(false);
+      }
+    } catch (e) {
+      console.error('Error in fullscreen exit:', e);
+      // Fallback
+      if (onFullscreenToggle) onFullscreenToggle(false);
     }
   }, [onFullscreenToggle, initializeCanvasSize]);
   
   const toggleFullscreen = useCallback(() => {
+    console.log('Toggle fullscreen, current state:', !!document.fullscreenElement);
     if (document.fullscreenElement) {
       exitFullscreen();
     } else {
@@ -143,9 +175,12 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     const handleFullscreenChange = () => {
       const isFullscreenActive = !!document.fullscreenElement;
       console.log('Fullscreen change detected:', isFullscreenActive);
+      
       if (onFullscreenToggle) onFullscreenToggle(isFullscreenActive);
-      if (!isFullscreenActive) {
-        // Reset canvas size when exiting fullscreen
+      
+      if (isFullscreenActive) {
+        handleResize();
+      } else {
         initializeCanvasSize();
       }
     };
@@ -159,9 +194,17 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   // Initialize canvas size on component mount and when container size changes
   useEffect(() => {
     console.log('Initializing canvas size, fullscreen:', isFullscreen);
-    initializeCanvasSize();
     
-    // Re-initialize on window resize when not in fullscreen
+    // Add a small delay to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      initializeCanvasSize();
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [initializeCanvasSize, isFullscreen]);
+  
+  // Re-initialize on window resize when not in fullscreen
+  useEffect(() => {
     if (!isFullscreen) {
       const handleWindowResize = () => {
         console.log('Window resize detected');
@@ -173,12 +216,12 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         window.removeEventListener('resize', handleWindowResize);
       };
     }
-  }, [initializeCanvasSize, isFullscreen]);
+  }, [isFullscreen, initializeCanvasSize]);
   
   // Handle screen resize
   const handleResize = useCallback(() => {
-    if (!isFullscreen || !canvasRef.current) {
-      console.log('Skip resize: not in fullscreen or canvas not ready');
+    if (!isFullscreen) {
+      console.log('Skip resize: not in fullscreen');
       return;
     }
     
@@ -206,6 +249,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     });
   }, [isFullscreen]);
   
+  // Add window resize event listener
   useEffect(() => {
     window.addEventListener('resize', handleResize);
     return () => {
@@ -227,39 +271,48 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   // Load game assets
   useEffect(() => {
     console.log('Loading game assets...');
+    setIsAssetLoading(true);
+    setAssetLoadProgress(0);
     
     const loadAssets = async () => {
       // Load images
-      const loadImage = (src: string): Promise<HTMLImageElement> => {
+      const loadImage = (src: string, progressValue: number): Promise<HTMLImageElement> => {
         return new Promise((resolve) => {
           const img = new Image();
           img.onload = () => {
             console.log(`Image loaded: ${src}`);
+            setAssetLoadProgress(prev => prev + progressValue);
             resolve(img);
           };
           img.onerror = (err) => {
             console.error(`Failed to load image: ${src}`, err);
             // Create a placeholder image to prevent game from crashing
             const placeholderImage = new Image(50, 50);
+            setAssetLoadProgress(prev => prev + progressValue);
             resolve(placeholderImage);
           };
+          img.crossOrigin = "anonymous"; // This helps with CORS issues
           img.src = src;
         });
       };
 
       try {
+        // Calculate progress increment per asset
+        const totalAssets = 9; // Total number of images to load
+        const progressIncrement = 100 / totalAssets;
+        
         // Load player images
-        playerImageRef.current = await loadImage('/lovable-uploads/idle.webp');
-        playerJetImageRef.current = await loadImage('/lovable-uploads/jet.webp');
-        playerJetSpeedImageRef.current = await loadImage('/lovable-uploads/jetsp.webp');
+        playerImageRef.current = await loadImage('/lovable-uploads/idle.webp', progressIncrement);
+        playerJetImageRef.current = await loadImage('/lovable-uploads/jet.webp', progressIncrement);
+        playerJetSpeedImageRef.current = await loadImage('/lovable-uploads/jetsp.webp', progressIncrement);
         
         // Load obstacle and item images
-        cheeseImageRef.current = await loadImage('/lovable-uploads/cheese.webp');
-        satelliteImageRef.current = await loadImage('/lovable-uploads/satellite.webp');
-        dogeImageRef.current = await loadImage('/lovable-uploads/doge.webp');
-        pizzaImageRef.current = await loadImage('/lovable-uploads/pizza.webp');
-        marsImageRef.current = await loadImage('/lovable-uploads/mars.webp');
-        solanaImageRef.current = await loadImage('/lovable-uploads/solana.webp');
+        cheeseImageRef.current = await loadImage('/lovable-uploads/cheese.webp', progressIncrement);
+        satelliteImageRef.current = await loadImage('/lovable-uploads/satellite.webp', progressIncrement);
+        dogeImageRef.current = await loadImage('/lovable-uploads/doge.webp', progressIncrement);
+        pizzaImageRef.current = await loadImage('/lovable-uploads/pizza.webp', progressIncrement);
+        marsImageRef.current = await loadImage('/lovable-uploads/mars.webp', progressIncrement);
+        solanaImageRef.current = await loadImage('/lovable-uploads/solana.webp', progressIncrement);
 
         console.log('All images loaded successfully');
         
@@ -280,14 +333,22 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
 
         // Mark assets as loaded
         setAssetsLoaded(true);
+        setIsAssetLoading(false);
         
         // Start game once assets are loaded
         setGameStartTime(Date.now());
+        
+        // Create player object now that assets are loaded
+        if (canvasSize.width > 0 && canvasSize.height > 0 && playerImageRef.current) {
+          console.log('Creating player object after asset load');
+          createPlayerObject();
+        }
         
         // Log the successful load
         console.log('Assets loaded, game ready to start');
       } catch (error) {
         console.error('Failed to load game assets:', error);
+        setIsAssetLoading(false);
       }
     };
 
@@ -304,16 +365,10 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     };
   }, []);
 
-  // Create player object when canvas size is initialized and assets are loaded
-  useEffect(() => {
-    if (initialized && assetsLoaded && playerImageRef.current) {
-      console.log('Creating player object', { width: canvasSize.width, height: canvasSize.height });
-      
-      // Ensure we have a valid canvas size
-      if (canvasSize.width <= 0 || canvasSize.height <= 0) {
-        console.error('Invalid canvas size:', canvasSize);
-        return;
-      }
+  // Create player object
+  const createPlayerObject = useCallback(() => {
+    if (playerImageRef.current && canvasSize.width > 0 && canvasSize.height > 0) {
+      console.log('Creating player object with size:', canvasSize);
       
       const playerObject: GameObject = {
         x: canvasSize.width / 2 - 25,
@@ -325,24 +380,29 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         image: playerImageRef.current
       };
       
-      console.log('Setting player object');
       setGameObjects([playerObject]);
       
-      // Start game loop if it's not already running
-      if (gameLoop === null) {
-        console.log('Starting game loop');
+      // Start game loop if assets are loaded
+      if (assetsLoaded && gameLoop === null) {
+        console.log('Starting game loop after player creation');
         startGameLoop();
       }
-      
-      logGameState();
     } else {
-      console.log('Not ready to create player:', { 
-        initialized, 
-        assetsLoaded, 
-        hasPlayerImage: !!playerImageRef.current 
+      console.log('Cannot create player yet:', {
+        hasPlayerImage: !!playerImageRef.current,
+        canvasWidth: canvasSize.width,
+        canvasHeight: canvasSize.height
       });
     }
-  }, [initialized, assetsLoaded, canvasSize, gameLoop]);
+  }, [canvasSize, assetsLoaded, gameLoop]);
+
+  // Create player object when canvas size is initialized and assets are loaded
+  useEffect(() => {
+    if (initialized && assetsLoaded && !gameObjects.length) {
+      console.log('Canvas initialized and assets loaded, creating player');
+      createPlayerObject();
+    }
+  }, [initialized, assetsLoaded, gameObjects.length, createPlayerObject]);
 
   // Play background music
   useEffect(() => {
@@ -633,15 +693,6 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     }
   }, [handleBoost]);
 
-  // Debug status reporting in first render cycle
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log('Game component status:');
-      logGameState();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [logGameState]);
-
   return (
     <div 
       ref={gameContainerRef}
@@ -710,8 +761,8 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         )}
       </div>
       
-      {/* Loading indication */}
-      {(!initialized || !assetsLoaded || gameObjects.length === 0) && (
+      {/* Loading indication - improved visibility */}
+      {(isAssetLoading || !initialized || !assetsLoaded || gameObjects.length === 0) && (
         <div className="absolute inset-0 flex items-center justify-center bg-space-dark/80 z-10 rounded-lg">
           <div className="text-center">
             <img 
@@ -720,6 +771,18 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
               className="h-16 w-16 mx-auto animate-bounce" 
             />
             <p className="text-white mt-4">Loading game...</p>
+            
+            {isAssetLoading && (
+              <div className="mt-4 w-48 mx-auto">
+                <div className="h-2 w-full bg-gray-700 rounded-full">
+                  <div 
+                    className="h-full bg-space-accent rounded-full transition-all duration-300"
+                    style={{ width: `${assetLoadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">{Math.floor(assetLoadProgress)}%</p>
+              </div>
+            )}
           </div>
         </div>
       )}
