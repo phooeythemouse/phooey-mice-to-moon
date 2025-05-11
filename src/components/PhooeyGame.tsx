@@ -1,6 +1,7 @@
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Maximize, Minimize, Gamepad2 } from 'lucide-react';
+import { Maximize, Minimize, Gamepad2, VolumeX, Volume2 } from 'lucide-react';
 
 interface GameObject {
   x: number;
@@ -16,8 +17,29 @@ interface PhooeyGameProps {
   onGameEnd: (score: number) => void;
   isFullscreen?: boolean;
   onFullscreenToggle?: (enterFullscreen: boolean) => void;
-  onError?: () => void; // Add error callback prop
+  onError?: () => void;
 }
+
+// List of game assets with their paths for more organized loading
+const GAME_ASSETS = {
+  images: {
+    player: '/lovable-uploads/idle.webp',
+    playerJet: '/lovable-uploads/jet.webp',
+    playerJetSpeed: '/lovable-uploads/jetsp.webp',
+    cheese: '/lovable-uploads/cheese.webp',
+    satellite: '/lovable-uploads/satellite.webp',
+    doge: '/lovable-uploads/doge.webp',
+    pizza: '/lovable-uploads/pizza.webp',
+    mars: '/lovable-uploads/mars.webp',
+    solana: '/lovable-uploads/solana.webp'
+  },
+  audio: {
+    boost: '/boost.mp3',
+    collect: '/collect.mp3',
+    crash: '/crash.mp3',
+    background: '/space-music.mp3'
+  }
+};
 
 const PhooeyGame: React.FC<PhooeyGameProps> = ({ 
   onGameEnd, 
@@ -40,6 +62,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
   const [isAssetLoading, setIsAssetLoading] = useState(true);
   const [assetLoadProgress, setAssetLoadProgress] = useState(0);
   const [assetLoadErrors, setAssetLoadErrors] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const isMobile = useIsMobile();
   
   // Asset references
@@ -272,6 +295,29 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     }
   }, [isFullscreen, handleResize, initializeCanvasSize]);
 
+  // Toggle sound on/off
+  const toggleSound = useCallback(() => {
+    setSoundEnabled(prev => {
+      const newState = !prev;
+      
+      if (newState === false) {
+        // Mute all audio
+        if (bgMusicRef.current) bgMusicRef.current.pause();
+        if (boostSoundRef.current) boostSoundRef.current.muted = true;
+        if (cheeseCollectSoundRef.current) cheeseCollectSoundRef.current.muted = true;
+        if (crashSoundRef.current) crashSoundRef.current.muted = true;
+      } else {
+        // Unmute all audio
+        if (bgMusicRef.current && gameObjects.length > 0) bgMusicRef.current.play().catch(e => console.log('Audio play failed:', e));
+        if (boostSoundRef.current) boostSoundRef.current.muted = false;
+        if (cheeseCollectSoundRef.current) cheeseCollectSoundRef.current.muted = false;
+        if (crashSoundRef.current) crashSoundRef.current.muted = false;
+      }
+      
+      return newState;
+    });
+  }, [gameObjects.length]);
+
   // Load game assets
   useEffect(() => {
     console.log('Loading game assets...');
@@ -294,6 +340,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
             
             // Create a placeholder image to prevent game from crashing
             const placeholderImage = new Image(50, 50);
+            placeholderImage.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiM3MzczNzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiPj88L3RleHQ+PC9zdmc+';
             setAssetLoadProgress(prev => prev + progressValue);
             resolve(placeholderImage);
           };
@@ -302,39 +349,73 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         });
       };
 
+      // Load audio with proper error handling
+      const loadAudio = (src: string, progressValue: number): Promise<HTMLAudioElement> => {
+        return new Promise((resolve) => {
+          const audio = new Audio();
+          
+          // Add load event handler
+          audio.onloadeddata = () => {
+            console.log(`Audio loaded: ${src}`);
+            setAssetLoadProgress(prev => prev + progressValue);
+            resolve(audio);
+          };
+          
+          // Add error handler
+          audio.onerror = (err) => {
+            console.error(`Failed to load audio: ${src}`, err);
+            setAssetLoadErrors(prev => prev + 1);
+            
+            // Create a dummy audio element that won't crash
+            const dummyAudio = new Audio();
+            // Set up a fake play method that won't cause errors
+            dummyAudio.play = async () => Promise.resolve();
+            setAssetLoadProgress(prev => prev + progressValue);
+            resolve(dummyAudio);
+          };
+          
+          // Start loading
+          audio.preload = 'auto';
+          audio.src = src;
+        });
+      };
+
       try {
         // Calculate progress increment per asset
-        const totalAssets = 9; // Total number of images to load
+        const totalAssets = Object.keys(GAME_ASSETS.images).length + Object.keys(GAME_ASSETS.audio).length;
         const progressIncrement = 100 / totalAssets;
         
         // Load player images
-        playerImageRef.current = await loadImage('/lovable-uploads/idle.webp', progressIncrement);
-        playerJetImageRef.current = await loadImage('/lovable-uploads/jet.webp', progressIncrement);
-        playerJetSpeedImageRef.current = await loadImage('/lovable-uploads/jetsp.webp', progressIncrement);
+        playerImageRef.current = await loadImage(GAME_ASSETS.images.player, progressIncrement);
+        playerJetImageRef.current = await loadImage(GAME_ASSETS.images.playerJet, progressIncrement);
+        playerJetSpeedImageRef.current = await loadImage(GAME_ASSETS.images.playerJetSpeed, progressIncrement);
         
         // Load obstacle and item images
-        cheeseImageRef.current = await loadImage('/lovable-uploads/cheese.webp', progressIncrement);
-        satelliteImageRef.current = await loadImage('/lovable-uploads/satellite.webp', progressIncrement);
-        dogeImageRef.current = await loadImage('/lovable-uploads/doge.webp', progressIncrement);
-        pizzaImageRef.current = await loadImage('/lovable-uploads/pizza.webp', progressIncrement);
-        marsImageRef.current = await loadImage('/lovable-uploads/mars.webp', progressIncrement);
-        solanaImageRef.current = await loadImage('/lovable-uploads/solana.webp', progressIncrement);
+        cheeseImageRef.current = await loadImage(GAME_ASSETS.images.cheese, progressIncrement);
+        satelliteImageRef.current = await loadImage(GAME_ASSETS.images.satellite, progressIncrement);
+        dogeImageRef.current = await loadImage(GAME_ASSETS.images.doge, progressIncrement);
+        pizzaImageRef.current = await loadImage(GAME_ASSETS.images.pizza, progressIncrement);
+        marsImageRef.current = await loadImage(GAME_ASSETS.images.mars, progressIncrement);
+        solanaImageRef.current = await loadImage(GAME_ASSETS.images.solana, progressIncrement);
 
         console.log('All images loaded successfully');
         
-        // Create audio elements
+        // Create and load audio elements with proper error handling
         try {
-          boostSoundRef.current = new Audio('/lovable-uploads/boost.mp3');
-          cheeseCollectSoundRef.current = new Audio('/lovable-uploads/collect.mp3');
-          crashSoundRef.current = new Audio('/lovable-uploads/crash.mp3');
-          bgMusicRef.current = new Audio('/lovable-uploads/background.mp3');
+          boostSoundRef.current = await loadAudio(GAME_ASSETS.audio.boost, progressIncrement);
+          cheeseCollectSoundRef.current = await loadAudio(GAME_ASSETS.audio.collect, progressIncrement);
+          crashSoundRef.current = await loadAudio(GAME_ASSETS.audio.crash, progressIncrement);
+          bgMusicRef.current = await loadAudio(GAME_ASSETS.audio.background, progressIncrement);
           
           if (bgMusicRef.current) {
             bgMusicRef.current.loop = true;
             bgMusicRef.current.volume = 0.3;
           }
+          
+          console.log('All audio loaded successfully');
         } catch (audioError) {
           console.error('Failed to load audio assets:', audioError);
+          // Continue the game even if audio fails to load
         }
 
         // Check for too many errors
@@ -427,7 +508,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
 
   // Play background music
   useEffect(() => {
-    if (assetsLoaded && bgMusicRef.current && gameObjects.length > 0) {
+    if (assetsLoaded && bgMusicRef.current && gameObjects.length > 0 && soundEnabled) {
       bgMusicRef.current.play().catch(error => {
         console.log('Audio play failed:', error);
       });
@@ -438,7 +519,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         bgMusicRef.current.pause();
       }
     };
-  }, [assetsLoaded, gameObjects.length]);
+  }, [assetsLoaded, gameObjects.length, soundEnabled]);
 
   const startGameLoop = useCallback(() => {
     try {
@@ -517,7 +598,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         if (obj.type === 'cheese') {
           // Collect cheese
           setScore(prev => prev + 10);
-          if (cheeseCollectSoundRef.current) {
+          if (cheeseCollectSoundRef.current && soundEnabled) {
             cheeseCollectSoundRef.current.currentTime = 0;
             cheeseCollectSoundRef.current.play().catch(e => console.log(e));
           }
@@ -526,7 +607,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
           setGameObjects(prev => prev.filter(o => o !== obj));
         } else if (obj.type === 'obstacle') {
           // Crash into obstacle
-          if (crashSoundRef.current) {
+          if (crashSoundRef.current && soundEnabled) {
             crashSoundRef.current.play().catch(e => console.log(e));
           }
           
@@ -693,7 +774,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     setBoostMode(true);
     setPlayerVelocity(-5);
     
-    if (boostSoundRef.current) {
+    if (boostSoundRef.current && soundEnabled) {
       boostSoundRef.current.currentTime = 0;
       boostSoundRef.current.play().catch(e => console.log(e));
     }
@@ -702,7 +783,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     setTimeout(() => {
       setBoostMode(false);
     }, 200);
-  }, []);
+  }, [soundEnabled]);
 
   const endGame = useCallback((success = false) => {
     if (gameLoop !== null) {
@@ -766,18 +847,34 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         onTouchStart={handleBoost}
       />
       
-      {/* Fullscreen toggle button */}
-      <button
-        onClick={toggleFullscreen}
-        className="absolute top-2 right-2 z-10 p-2 bg-space-dark/70 rounded-full hover:bg-space-dark transition-all"
-        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      >
-        {isFullscreen ? (
-          <Minimize className="text-white w-6 h-6" />
-        ) : (
-          <Maximize className="text-white w-6 h-6" />
-        )}
-      </button>
+      {/* Game control buttons */}
+      <div className="absolute top-2 right-2 z-10 flex gap-2">
+        {/* Sound toggle button */}
+        <button
+          onClick={toggleSound}
+          className="p-2 bg-space-dark/70 rounded-full hover:bg-space-dark transition-all"
+          aria-label={soundEnabled ? "Mute sound" : "Enable sound"}
+        >
+          {soundEnabled ? (
+            <Volume2 className="text-white w-6 h-6" />
+          ) : (
+            <VolumeX className="text-white w-6 h-6" />
+          )}
+        </button>
+        
+        {/* Fullscreen toggle button */}
+        <button
+          onClick={toggleFullscreen}
+          className="p-2 bg-space-dark/70 rounded-full hover:bg-space-dark transition-all"
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        >
+          {isFullscreen ? (
+            <Minimize className="text-white w-6 h-6" />
+          ) : (
+            <Maximize className="text-white w-6 h-6" />
+          )}
+        </button>
+      </div>
       
       {/* Game controls */}
       <div className={`game-controls mt-4 flex justify-center ${isFullscreen ? 'fullscreen-controls' : ''}`}>

@@ -1,13 +1,13 @@
 
-import React, { useState, useEffect, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GameLeaderboard from '@/components/GameLeaderboard';
 import { toast } from 'sonner';
-import { ArrowUpRight, Loader2 } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
 
-// Regular import instead of dynamic import
+// Direct import to prevent loading issues
 import PhooeyGame from '@/components/PhooeyGame';
 
 const Game = () => {
@@ -38,6 +38,32 @@ const Game = () => {
       console.error("Error initializing game:", error);
       setLoadError(true);
     }
+    
+    // Pre-load key assets
+    const preloadAssets = async () => {
+      try {
+        // Preload key images
+        const playerImage = new Image();
+        playerImage.src = "/lovable-uploads/phooey.webp";
+        
+        // Preload audio files
+        const audioFiles = ["/boost.mp3", "/collect.mp3", "/crash.mp3", "/space-music.mp3"];
+        
+        // Create hidden audio elements to ensure faster loading when game starts
+        audioFiles.forEach(file => {
+          const audio = new Audio();
+          audio.preload = "auto";
+          audio.src = file;
+          // Don't actually play it, just load it
+          audio.load();
+        });
+      } catch (err) {
+        console.log("Asset preloading error:", err);
+        // Non-critical, so continue without blocking
+      }
+    };
+    
+    preloadAssets();
     
     return () => clearTimeout(timer);
   }, []);
@@ -145,6 +171,7 @@ const Game = () => {
               className="h-32 w-32 mx-auto animate-float" 
             />
             <p className="text-xl mt-4 text-space-accent">Ready for liftoff?</p>
+            <p className="mt-2 text-gray-300">Help PHOOEY collect cheese and reach Mars!</p>
           </div>
           <button 
             onClick={handleStartGame}
@@ -152,6 +179,9 @@ const Game = () => {
           >
             Start Game
           </button>
+          <p className="mt-4 text-gray-400 text-sm">
+            Use spacebar (desktop) or tap the screen (mobile) to boost!
+          </p>
         </div>
       );
     }
