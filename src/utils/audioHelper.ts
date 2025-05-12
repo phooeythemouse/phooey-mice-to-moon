@@ -18,15 +18,23 @@ export const initializeAudio = () => {
     // Set volume to 0 and try to play them
     tempSounds.forEach(sound => {
       sound.volume = 0;
+      
+      // Add error handling for each audio element
+      sound.onerror = (e) => {
+        console.error('Audio failed to load:', sound.src, e);
+      };
+      
       sound.play().then(() => {
         sound.pause();
         sound.currentTime = 0;
+        console.log('Successfully initialized audio:', sound.src);
       }).catch(() => {
         // Expected to fail on some browsers without user interaction
         console.log('Audio initialization expected to fail on first load (browser security)');
       });
     });
     
+    console.log('Audio initialization completed');
     return true;
   } catch (err) {
     console.error('Audio initialization failed:', err);
@@ -36,9 +44,15 @@ export const initializeAudio = () => {
 
 // Helper to safely play audio with fallbacks
 export const playSoundEffect = (audio: HTMLAudioElement | null, volume = 1.0): void => {
-  if (!audio) return;
+  if (!audio) {
+    console.log('Attempted to play null audio');
+    return;
+  }
   
   try {
+    // Log the source to help debug
+    console.log('Attempting to play:', audio.src);
+    
     // Reset audio to beginning
     audio.currentTime = 0;
     audio.volume = volume;
@@ -54,8 +68,9 @@ export const playSoundEffect = (audio: HTMLAudioElement | null, volume = 1.0): v
         
         // Try again with user interaction
         const handleUserInteraction = () => {
-          audio.play().catch(() => {
+          audio.play().catch((err) => {
             // Still failed, give up silently
+            console.log('Still failed to play audio after user interaction:', err);
           });
           document.removeEventListener('click', handleUserInteraction);
           document.removeEventListener('touchstart', handleUserInteraction);

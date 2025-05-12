@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PHOOEY - First Lunar Meme</title>
+    <meta name="description" content="PHOOEY Memecoin celebrates the legacy of Apollo 17 mice, the first rodents to orbit the Moon. Join our space adventure on Solana!" />
+    <base href="/" />
+    <script>
+      // This script helps handle client-side routing with direct URLs
+      (function() {
+        // Redirect logic for SPA hosted on static servers
+        const redirectToPaths = [
+          '/game', '/about', '/token', '/nft', '/community', '/fun',
+          '/terms', '/privacy', '/contact', '/admin'
+        ];
+        
+        // Check if this is a direct hit to a known route
+        const path = window.location.pathname;
+        const shouldRedirect = redirectToPaths.some(route => path.startsWith(route));
+        
+        if (shouldRedirect && !document.querySelector('body > div#root > *')) {
+          console.log('Handling SPA routing for direct navigation to:', path);
+          window.history.replaceState(null, '', path);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

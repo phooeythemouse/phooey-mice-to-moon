@@ -1,10 +1,9 @@
-
 import React, { lazy, Suspense, useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import PerformanceMonitor from "./components/PerformanceMonitor";
 import { WalletProvider } from "./providers/WalletProvider";
@@ -61,6 +60,18 @@ const ErrorFallback = ({ resetErrorBoundary }: { resetErrorBoundary?: () => void
   </div>
 );
 
+// ScrollToTop component to ensure proper scrolling behavior when navigating
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+};
+
+// Configure React Query client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -141,6 +152,7 @@ const App = () => {
           <Sonner />
           <PerformanceMonitor />
           <BrowserRouter>
+            <ScrollToTop />
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* Eagerly loaded routes */}

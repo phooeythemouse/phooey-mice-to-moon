@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -6,6 +5,7 @@ import GameLeaderboard from '@/components/GameLeaderboard';
 import { toast } from 'sonner';
 import { ArrowUpRight } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
+import { initializeAudio } from '@/utils/audioHelper';
 
 // Direct import to prevent loading issues
 import PhooeyGame from '@/components/PhooeyGame';
@@ -25,6 +25,9 @@ const Game = () => {
   useEffect(() => {
     console.log("Game component mounted");
     
+    // Pre-initialize audio to help with mobile browsers
+    initializeAudio();
+    
     // Set loading state with timeout to ensure it gets reset
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -37,15 +40,24 @@ const Game = () => {
         // Preload key images
         const playerImage = new Image();
         playerImage.src = "/lovable-uploads/phooey.webp";
+        playerImage.onload = () => console.log("Preloaded phooey.webp");
+        playerImage.onerror = (e) => console.error("Failed to preload phooey.webp", e);
         
-        // Preload audio files
-        const audioFiles = ["/boost.mp3", "/collect.mp3", "/crash.mp3", "/space-music.mp3"];
+        // Preload audio files (with correct paths)
+        const audioFiles = [
+          "/lovable-uploads/boost.mp3", 
+          "/lovable-uploads/collect.mp3", 
+          "/lovable-uploads/crash.mp3", 
+          "/lovable-uploads/space-music.mp3"
+        ];
         
         // Create hidden audio elements to ensure faster loading when game starts
         audioFiles.forEach(file => {
           const audio = new Audio();
           audio.preload = "auto";
           audio.src = file;
+          audio.oncanplaythrough = () => console.log("Preloaded audio:", file);
+          audio.onerror = () => console.error("Failed to preload audio:", file);
           // Load audio file to cache it
           audio.load();
         });
@@ -81,6 +93,9 @@ const Game = () => {
       setGameEnded(false);
       setFinalScore(0);
       setLoadError(false);
+      
+      // Pre-initialize audio again
+      initializeAudio();
       
       // Show toast for game start
       toast.info("Game starting! Get ready to fly!");
