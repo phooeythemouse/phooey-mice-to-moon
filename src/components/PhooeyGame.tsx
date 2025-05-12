@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Maximize, Minimize, Gamepad2, VolumeX, Volume2 } from 'lucide-react';
@@ -565,6 +564,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         }
       };
       
+      // Define the handleUserInteraction function within this effect scope
       const handleUserInteraction = () => {
         if (bgMusicRef.current && soundEnabled) {
           playSoundEffect(bgMusicRef.current, 0.2);
@@ -576,15 +576,15 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       // Add listener for user interaction
       document.addEventListener('click', handleUserInteraction, { once: true });
       document.addEventListener('touchstart', handleUserInteraction, { once: true });
+      
+      return () => {
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+        if (bgMusicRef.current) {
+          bgMusicRef.current.pause();
+        }
+      };
     }
-    
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      if (bgMusicRef.current) {
-        bgMusicRef.current.pause();
-      }
-    };
   }, [assetsLoaded, gameObjects.length, soundEnabled]);
 
   const startGameLoop = useCallback(() => {
