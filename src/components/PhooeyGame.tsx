@@ -1,6 +1,8 @@
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Maximize, Minimize, Gamepad2, VolumeX, Volume2 } from 'lucide-react';
+import { playSoundEffect, initializeAudio } from '@/utils/audioHelper';
 
 interface GameObject {
   x: number;
@@ -319,37 +321,11 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     });
   }, [gameObjects.length]);
 
-  // Create dummy audio elements for mobile browsers
-  const createDummyAudio = () => {
-    try {
-      // Create temporary audio elements for each sound
-      const tempSounds = [
-        new Audio('/boost.mp3'),
-        new Audio('/collect.mp3'),
-        new Audio('/crash.mp3'),
-        new Audio('/space-music.mp3')
-      ];
-      
-      // Set volume to 0 and try to play them
-      tempSounds.forEach(sound => {
-        sound.volume = 0;
-        sound.play().then(() => {
-          sound.pause();
-          sound.currentTime = 0;
-        }).catch(e => {
-          console.log('Initial audio play failed (expected on some browsers):', e);
-        });
-      });
-    } catch (err) {
-      console.error('Error creating dummy audio:', err);
-    }
-  };
-
   // Initialize audio context for iOS devices
   useEffect(() => {
     // Try to initialize audio on first user interaction
     const handleInitAudio = () => {
-      createDummyAudio();
+      initializeAudio();
       document.removeEventListener('click', handleInitAudio);
       document.removeEventListener('touchstart', handleInitAudio);
     };
@@ -469,7 +445,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
           console.log('All audio loaded successfully');
           
           // Trigger a user interaction simulation to enable audio on some browsers
-          createDummyAudio();
+          initializeAudio();
         } catch (audioError) {
           console.error('Failed to load audio assets:', audioError);
           // Continue the game even if audio fails to load
@@ -504,9 +480,24 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       }
     };
 
+    // Set a timeout to make sure assets load or fail within a reasonable timeframe
+    const assetTimeout = setTimeout(() => {
+      if (isAssetLoading) {
+        console.log('Asset loading timed out, continuing with what we have');
+        setAssetsLoaded(true);
+        setIsAssetLoading(false);
+        
+        // Try to create player if we can
+        if (playerImageRef.current && canvasSize.width > 0 && canvasSize.height > 0) {
+          createPlayerObject();
+        }
+      }
+    }, 8000); // 8 second timeout
+
     loadAssets();
 
     return () => {
+      clearTimeout(assetTimeout);
       if (gameLoop !== null) {
         cancelAnimationFrame(gameLoop);
       }
@@ -570,25 +561,26 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
       const playMusic = () => {
         if (bgMusicRef.current) {
           bgMusicRef.current.volume = 0.2;
-          bgMusicRef.current.play().catch(error => {
-            console.log('Background music play failed:', error);
-            // Try again with user interaction
-            document.addEventListener('click', handleUserInteraction, { once: true });
-            document.addEventListener('touchstart', handleUserInteraction, { once: true });
-          });
+          playSoundEffect(bgMusicRef.current, 0.2);
         }
       };
       
       const handleUserInteraction = () => {
         if (bgMusicRef.current && soundEnabled) {
-          bgMusicRef.current.play().catch(err => console.log('Music play still failed:', err));
+          playSoundEffect(bgMusicRef.current, 0.2);
         }
       };
       
       playMusic();
+      
+      // Add listener for user interaction
+      document.addEventListener('click', handleUserInteraction, { once: true });
+      document.addEventListener('touchstart', handleUserInteraction, { once: true });
     }
     
     return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
       if (bgMusicRef.current) {
         bgMusicRef.current.pause();
       }
@@ -673,8 +665,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
           // Collect cheese
           setScore(prev => prev + 10);
           if (cheeseCollectSoundRef.current && soundEnabled) {
-            cheeseCollectSoundRef.current.currentTime = 0;
-            cheeseCollectSoundRef.current.play().catch(e => console.log(e));
+            playSoundEffect(cheeseCollectSoundRef.current);
           }
           
           // Remove the cheese
@@ -682,7 +673,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         } else if (obj.type === 'obstacle') {
           // Crash into obstacle
           if (crashSoundRef.current && soundEnabled) {
-            crashSoundRef.current.play().catch(e => console.log(e));
+            playSoundEffect(crashSoundRef.current);
           }
           
           // End the game
@@ -849,8 +840,7 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     setPlayerVelocity(-5);
     
     if (boostSoundRef.current && soundEnabled) {
-      boostSoundRef.current.currentTime = 0;
-      boostSoundRef.current.play().catch(e => console.log(e));
+      playSoundEffect(boostSoundRef.current);
     }
     
     // Turn off boost mode after a short time
@@ -911,6 +901,24 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
     return () => clearTimeout(checkInitialization);
   }, [initialized, assetsLoaded, onError]);
 
+  // Handle cases where user doesn't interact and assets get stuck
+  useEffect(() => {
+    const forceInitTimeout = setTimeout(() => {
+      if (isAssetLoading) {
+        console.log('Force completing asset loading after timeout');
+        setIsAssetLoading(false);
+        setAssetsLoaded(true);
+        
+        // Try to create player if possible
+        if (playerImageRef.current && canvasSize.width > 0 && canvasSize.height > 0) {
+          createPlayerObject();
+        }
+      }
+    }, 10000); // Force complete after 10 seconds
+    
+    return () => clearTimeout(forceInitTimeout);
+  }, [isAssetLoading, canvasSize.width, canvasSize.height, createPlayerObject]);
+
   return (
     <div 
       ref={gameContainerRef}
@@ -927,6 +935,10 @@ const PhooeyGame: React.FC<PhooeyGameProps> = ({
         `}
         onClick={handleBoost}
         onTouchStart={handleBoost}
+        style={{
+          display: 'block', // Ensure canvas is visible
+          margin: '0 auto'  // Center canvas horizontally
+        }}
       />
       
       {/* Game control buttons */}

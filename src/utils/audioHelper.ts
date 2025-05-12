@@ -23,6 +23,7 @@ export const initializeAudio = () => {
         sound.currentTime = 0;
       }).catch(() => {
         // Expected to fail on some browsers without user interaction
+        console.log('Audio initialization expected to fail on first load (browser security)');
       });
     });
     
@@ -47,11 +48,25 @@ export const playSoundEffect = (audio: HTMLAudioElement | null, volume = 1.0): v
     
     // Handle promise rejection (happens in some browsers)
     if (playPromise !== undefined) {
-      playPromise.catch(() => {
+      playPromise.catch((e) => {
         // Silent catch - this is expected behavior in some browsers
+        console.log('Audio play promise rejected:', e);
+        
+        // Try again with user interaction
+        const handleUserInteraction = () => {
+          audio.play().catch(() => {
+            // Still failed, give up silently
+          });
+          document.removeEventListener('click', handleUserInteraction);
+          document.removeEventListener('touchstart', handleUserInteraction);
+        };
+        
+        document.addEventListener('click', handleUserInteraction, { once: true });
+        document.addEventListener('touchstart', handleUserInteraction, { once: true });
       });
     }
   } catch (e) {
     // Silent catch - allow game to continue without sound if there's an issue
+    console.log('Error playing sound:', e);
   }
 };

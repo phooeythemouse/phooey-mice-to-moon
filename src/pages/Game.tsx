@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -47,14 +48,6 @@ const Game = () => {
           audio.src = file;
           // Load audio file to cache it
           audio.load();
-          // Try to play and immediately pause to ensure it's ready
-          audio.volume = 0;
-          audio.play().then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-          }).catch(err => {
-            console.log("Audio preload error (non-critical):", err);
-          });
         });
       } catch (err) {
         console.log("Asset preloading error:", err);
