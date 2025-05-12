@@ -7,12 +7,12 @@
 // Create dummy audio elements for browsers that need user interaction
 export const initializeAudio = () => {
   try {
-    // Create temporary audio elements for each sound
+    // Create temporary audio elements for each sound with correct paths
     const tempSounds = [
-      new Audio('/boost.mp3'),
-      new Audio('/collect.mp3'),
-      new Audio('/crash.mp3'),
-      new Audio('/space-music.mp3')
+      new Audio('/lovable-uploads/boost.mp3'),
+      new Audio('/lovable-uploads/collect.mp3'),
+      new Audio('/lovable-uploads/crash.mp3'),
+      new Audio('/lovable-uploads/space-music.mp3')
     ];
     
     // Set volume to 0 and try to play them

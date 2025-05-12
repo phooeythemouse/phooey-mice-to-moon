@@ -34,10 +34,10 @@ const GAME_ASSETS = {
     solana: '/lovable-uploads/solana.webp'
   },
   audio: {
-    boost: '/boost.mp3',
-    collect: '/collect.mp3',
-    crash: '/crash.mp3',
-    background: '/space-music.mp3'
+    boost: '/lovable-uploads/boost.mp3',
+    collect: '/lovable-uploads/collect.mp3',
+    crash: '/lovable-uploads/crash.mp3',
+    background: '/lovable-uploads/space-music.mp3'
   }
 };
 
