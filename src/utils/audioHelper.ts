@@ -7,6 +7,8 @@
 // Create dummy audio elements for browsers that need user interaction
 export const initializeAudio = () => {
   try {
+    console.log('Initializing audio system...');
+    
     // Create temporary audio elements for each sound with correct paths
     const tempSounds = [
       new Audio('/lovable-uploads/boost.mp3'),
@@ -28,11 +30,25 @@ export const initializeAudio = () => {
         sound.pause();
         sound.currentTime = 0;
         console.log('Successfully initialized audio:', sound.src);
-      }).catch(() => {
+      }).catch((err) => {
         // Expected to fail on some browsers without user interaction
-        console.log('Audio initialization expected to fail on first load (browser security)');
+        console.log('Audio initialization expected to fail on first load (browser security):', err.message);
       });
     });
+    
+    // Add a global click handler to help initialize audio on iOS/Safari
+    const handleFirstInteraction = () => {
+      console.log('User interaction detected, initializing audio playback');
+      tempSounds.forEach(sound => {
+        sound.play().catch(e => console.log('Still failed after interaction:', e.message));
+        sound.pause();
+      });
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+    
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
     
     console.log('Audio initialization completed');
     return true;

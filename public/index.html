@@ -23,13 +23,23 @@
         
         if (shouldRedirect && !document.querySelector('body > div#root > *')) {
           console.log('Handling SPA routing for direct navigation to:', path);
-          window.history.replaceState(null, '', path);
+          
+          // For SPAs in history mode, ensure we load from root but maintain the route
+          if (window.location.origin + '/' !== window.location.href) {
+            window.history.replaceState(null, '', path);
+            // Force a small delay to ensure client-side routing takes over
+            setTimeout(() => {
+              console.log('Redirecting to root with client-side routing handling', path);
+            }, 100);
+          }
         }
       })();
     </script>
   </head>
   <body>
     <div id="root"></div>
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

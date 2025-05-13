@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GameLeaderboard from '@/components/GameLeaderboard';
@@ -8,7 +9,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import { initializeAudio } from '@/utils/audioHelper';
 
 // Direct import to prevent loading issues
-import PhooeyGame from '@/components/PhooeyGame';
+import PhooeyGameRefactored from '@/components/game/PhooeyGameRefactored';
 
 const Game = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -208,7 +209,7 @@ const Game = () => {
     if (gameStarted) {
       return (
         <ErrorBoundary fallback={<GameErrorFallback onRetry={handleStartGame} />}>
-          <PhooeyGame 
+          <PhooeyGameRefactored 
             key={gameKey}
             onGameEnd={handleGameEnd} 
             isFullscreen={isFullscreen}
